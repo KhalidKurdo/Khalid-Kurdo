@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ڕێنمایی DNS — باشترین ڕاژەکان بۆ خێراکردنی ئینتەرنێت و بلۆککردنی ڕیکلام</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070b14; --surface:#111827; --surface2:#161f33; --line:#1f2b45;
+  --text:#e6edf7; --muted:#8fa1c2;
+  --speed:#22d3ee; --ads:#34d399; --security:#f59e0b; --family:#a78bfa; --privacy:#f472b6; --regional:#60a5fa;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif;}
+body{min-height:100%;}
+.mono{font-family:'JetBrains Mono',monospace;direction:ltr;unicode-bidi:plaintext;}
+
+header.hero{
+  padding:2.6rem 1.25rem 2rem;
+  background:
+    radial-gradient(600px 300px at 85% -10%, rgba(34,211,238,.14), transparent),
+    radial-gradient(500px 260px at 10% 0%, rgba(167,139,250,.12), transparent);
+  border-bottom:1px solid var(--line);
+}
+.hero-inner{max-width:920px;margin:0 auto;}
+.eyebrow{color:var(--speed);font-size:.85rem;font-weight:500;margin:0 0 .4rem;}
+h1{font-size:clamp(1.6rem,5vw,2.4rem);font-weight:900;line-height:1.3;margin:0 0 .6rem;}
+.hero p{color:var(--muted);font-size:1rem;line-height:1.8;max-width:60ch;margin:0;}
+.stat-row{display:flex;gap:1.6rem;margin-top:1.4rem;flex-wrap:wrap;}
+.stat b{display:block;font-size:1.5rem;font-weight:900;}
+.stat span{color:var(--muted);font-size:.8rem;}
+
+.controls{
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:10;
+  background:rgba(7,11,20,.92);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+  padding:.9rem 1.25rem;
+}
+.controls-inner{max-width:920px;margin:0 auto;display:flex;flex-direction:column;gap:.7rem;}
+#search{
+  width:100%;padding:.75rem 1rem;border-radius:10px;border:1px solid var(--line);
+  background:var(--surface);color:var(--text);font-family:'Tajawal',sans-serif;font-size:.95rem;
+}
+#search:focus{outline:2px solid var(--speed);outline-offset:1px;}
+.tabs{display:flex;gap:.5rem;overflow-x:auto;padding-bottom:.2rem;}
+.tab{
+  flex:none;padding:.45rem .9rem;border-radius:999px;border:1px solid var(--line);
+  background:var(--surface);color:var(--muted);font-size:.85rem;font-family:'Tajawal',sans-serif;
+  cursor:pointer;white-space:nowrap;
+}
+.tab[aria-pressed="true"]{color:var(--bg);font-weight:700;border-color:transparent;}
+.tab[data-tag="all"][aria-pressed="true"]{background:var(--text);}
+.tab[data-tag="speed"][aria-pressed="true"]{background:var(--speed);}
+.tab[data-tag="ads"][aria-pressed="true"]{background:var(--ads);}
+.tab[data-tag="security"][aria-pressed="true"]{background:var(--security);}
+.tab[data-tag="family"][aria-pressed="true"]{background:var(--family);}
+.tab[data-tag="privacy"][aria-pressed="true"]{background:var(--privacy);}
+.tab[data-tag="regional"][aria-pressed="true"]{background:var(--regional);}
+
+main{max-width:920px;margin:0 auto;padding:1.25rem;}
+#count{color:var(--muted);font-size:.85rem;margin:0 0 .9rem;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:.7rem;}
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:.9rem 1rem;display:flex;flex-direction:column;gap:.4rem;
+}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem;}
+.card-name{font-weight:700;font-size:.92rem;}
+.badge{font-size:.68rem;padding:.15rem .55rem;border-radius:999px;font-weight:700;flex:none;color:var(--bg);}
+.badge.speed{background:var(--speed);}
+.badge.ads{background:var(--ads);}
+.badge.security{background:var(--security);}
+.badge.family{background:var(--family);}
+.badge.privacy{background:var(--privacy);}
+.badge.regional{background:var(--regional);}
+.card-value{font-size:.95rem;color:var(--text);}
+.card-bottom{display:flex;justify-content:space-between;align-items:center;gap:.5rem;margin-top:.2rem;}
+.card-desc{color:var(--muted);font-size:.75rem;}
+.copy-btn{
+  flex:none;border:1px solid var(--line);background:var(--surface2);color:var(--text);
+  border-radius:8px;padding:.4rem .7rem;font-size:.78rem;cursor:pointer;font-family:'Tajawal',sans-serif;
+  transition:background .15s;
+}
+.copy-btn:active{transform:scale(.97);}
+.copy-btn.copied{background:var(--ads);color:#07130d;border-color:transparent;}
+#empty{display:none;color:var(--muted);text-align:center;padding:2.5rem 1rem;}
+
+.guide{padding:2.5rem 1.25rem 3.5rem;border-top:1px solid var(--line);margin-top:1rem;}
+.guide-inner{max-width:920px;margin:0 auto;}
+.guide h2{font-size:1.5rem;font-weight:900;margin:0 0 .3rem;}
+.guide>.guide-inner>p{color:var(--muted);margin:0 0 1.6rem;line-height:1.8;}
+.os-grid{display:grid;grid-template-columns:1fr;gap:1rem;}
+@media(min-width:680px){.os-grid{grid-template-columns:1fr 1fr;}}
+.os-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:1.2rem 1.3rem;}
+.os-card h3{margin:0 0 .2rem;font-size:1.1rem;display:flex;align-items:center;gap:.5rem;}
+.os-card .note{color:var(--muted);font-size:.8rem;margin:0 0 1rem;line-height:1.7;}
+.steps{list-style:none;margin:0;padding:0;counter-reset:step;}
+.steps li{
+  counter-increment:step;position:relative;padding-inline-start:2.3rem;margin-bottom:.9rem;
+  font-size:.9rem;line-height:1.7;color:var(--text);
+}
+.steps li::before{
+  content:counter(step);position:absolute;inset-inline-start:0;top:0;
+  width:1.6rem;height:1.6rem;border-radius:50%;background:var(--surface2);border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:var(--speed);
+}
+.steps b{color:var(--speed);}
+.tip{margin-top:1rem;padding:.8rem 1rem;background:var(--surface2);border-radius:10px;font-size:.82rem;color:var(--muted);border-inline-start:3px solid var(--speed);line-height:1.7;}
+
+footer{text-align:center;color:var(--muted);font-size:.78rem;padding:1.5rem 1rem 2.5rem;line-height:1.7;}
+
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#f7f9fc;--surface:#ffffff;--surface2:#eef2f9;--line:#e2e8f5;--text:#131b2e;--muted:#5b6b8c;
+  }
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">ڕێنمایی تۆڕ — DNS</p>
+    <h1>ڕاژەکانی DNS بۆ خێراکردنی ئینتەرنێت و بلۆککردنی ڕیکلام</h1>
+    <p>کۆمەڵێک لە متمانەپێکراوترین ڕاژەکانی DNS ی بەخۆڕایی لە جیهاندا، دابەشکراون بەپێی مەبەست. کلیک لەسەر هەر ناونیشانێک بکە بۆ کۆپیکردنی ڕاستەوخۆی، پاشان ڕێنماییەکانی چالاککردن لە خوارەوەی پەڕەکە بۆ ئەندرۆید و ئایفۆن بەکاربهێنە.</p>
+    <div class="stat-row">
+      <div class="stat"><b id="totalStat">0</b><span>ناونیشانی DNS</span></div>
+      <div class="stat"><b>6</b><span>پۆل</span></div>
+      <div class="stat"><b>2</b><span>ڕێنمایی ئەندرۆید / ئایفۆن</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="controls-inner">
+    <input id="search" type="text" placeholder="بگەڕێ بۆ ناو یان ناونیشان… نموونە: Cloudflare یان 1.1.1.1">
+    <div class="tabs" id="tabs">
+      <button class="tab" data-tag="all" aria-pressed="true">هەموو</button>
+      <button class="tab" data-tag="speed" aria-pressed="false">⚡ خێرایی</button>
+      <button class="tab" data-tag="ads" aria-pressed="false">🚫 بلۆککردنی ڕیکلام</button>
+      <button class="tab" data-tag="security" aria-pressed="false">🛡️ ئاسایش</button>
+      <button class="tab" data-tag="family" aria-pressed="false">👨‍👩‍👧 بنەماڵەیی</button>
+      <button class="tab" data-tag="privacy" aria-pressed="false">🔒 تایبەتمەندی</button>
+      <button class="tab" data-tag="regional" aria-pressed="false">🌍 ناوچەیی</button>
+    </div>
+  </div>
+</div>
+
+<main>
+  <p id="count"></p>
+  <div class="grid" id="grid"></div>
+  <p id="empty">هیچ ئەنجامێکی گونجاو نەدۆزرایەوە.</p>
+</main>
+
+<section class="guide">
+  <div class="guide-inner">
+    <h2>چۆن DNS لەسەر مۆبایلەکەت چالاک بکەیت</h2>
+    <p>شێوازی نوێ (Private DNS / DoH) لەگەڵ ناونیشانە نووسراوەکان وەک dns.quad9.net بەکاردێت، بەڵام ناونیشانە ژمارەییەکان وەک 1.1.1.1 لە ڕێکخستنی دەستیی Wi-Fi بەکاردێن.</p>
+    <div class="os-grid">
+      <div class="os-card">
+        <h3>🤖 ئەندرۆید</h3>
+        <p class="note">پشتگیری Private DNS لە Android 9 و سەرەوە هەیە (لەسەر هەموو تۆڕەکان کاردەکات، نەک تەنها Wi-Fi ی ئێستا).</p>
+        <ol class="steps">
+          <li>ڕێکخستنەکان بکەرەوە، پاشان <b>تۆڕ و ئینتەرنێت</b> (Network & internet).</li>
+          <li><b>DNS تایبەت</b> هەڵبژێرە (Private DNS).</li>
+          <li><b>ناوی هۆستی دابینکەری DNS تایبەت</b> هەڵبژێرە (Private DNS provider hostname).</li>
+          <li>ناونیشانێکی نووسراو لە لیستەکە بنووسە، وەک <span class="mono">dns.adguard-dns.com</span>.</li>
+          <li>پاشەکەوتی بکە. بەخۆکار لەسەر هەموو تۆڕەکانی پەیوەندیدار کاردەکات.</li>
+        </ol>
+        <div class="tip">بۆ ناونیشانێکی ژمارەیی (وەک 1.1.1.1) لە جیاتی Private DNS: دەست بگرە بەسەر ناوی تۆڕی Wi-Fi ی پەیوەستکراو ← دەستکاریکردنی تۆڕ ← بژاردە پێشکەوتووەکان ← لە DHCP بۆ Static بگۆڕە ← DNS 1 و DNS 2 بنووسە.</div>
+      </div>
+      <div class="os-card">
+        <h3>🍎 ئایفۆن</h3>
+        <p class="note">بۆ چالاککردنی تەواوی DoH/DoT لەسەر iOS باشترە بەرنامەی دابینکەر دابمەزرێنیت (وەک AdGuard یان NextDNS)، چونکە بەخۆکار پەڕگەی ڕێکخستن (Profile) دروستدەکات.</p>
+        <ol class="steps">
+          <li>بەرنامەی دابینکەر لە App Store دابگرە (نموونە: AdGuard، NextDNS، Quad9).</li>
+          <li>بەرنامەکە بکەرەوە و لە ناوییەوە DNS تایبەت چالاک بکە — داوات لێدەکات پەڕگەی ڕێکخستنێک دابمەزرێنیت.</li>
+          <li>بڕۆ بۆ <b>ڕێکخستنەکان ← گشتی ← VPN و بەڕێوەبردنی ئامێر</b> و ڕازی بە دامەزراندنی پەڕگەکە بە.</li>
+          <li>بۆ شێوازی دەستیی لە جیاتی بەرنامەکە: <b>ڕێکخستنەکان ← Wi-Fi</b> ← کرتە لەسەر (ⓘ) لەتەنیشت تۆڕەکە بکە ← <b>ڕێکخستنی DNS</b> ← دەستیی ← ناونیشانی ژمارەیی زیاد بکە.</li>
+        </ol>
+        <div class="tip">شێوازی دەستیی لە ڕێگەی Wi-Fi تەنها لەسەر ئەو تۆڕە کاردەکات، بەڵام پەڕگەی ڕێکخستن (Profile) لەسەر هەموو تۆڕەکان و تۆڕی مۆبایلیش کاردەکات.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>بەهاکان کۆکراونەتەوە لە سەرچاوە فەرمییەکانی دابینکەران و ماڵپەڕە تەکنەلۆژی متمانەپێکراوەکان. هەمیشە پێش بەکارهێنانی بەردەوام لە ماڵپەڕی فەرمی دابینکەر دڵنیابەرەوە.</footer>
+
+<script>
+const DATA = [
+["Cloudflare — سەرەکی","1.1.1.1","speed","خێراترین لە جیهاندا"],["Cloudflare — لاوەکی","1.0.0.1","speed","کۆپی یەدەگ"],
+["Cloudflare — بلۆککردنی بەرنامەی زیانبەخش","1.1.1.2","security","ماڵپەڕە زیانبەخشەکان دەبلۆکێت"],["Cloudflare — بلۆککردنی زیانبەخش (لاوەکی)","1.0.0.2","security",""],
+["Cloudflare for Families","1.1.1.3","family","بلۆککردنی زیانبەخش + ناوەڕۆکی گەورەسالان"],["Cloudflare for Families (لاوەکی)","1.0.0.3","family",""],
+["Cloudflare IPv6","2606:4700:4700::1111","speed",""],["Cloudflare IPv6 (لاوەکی)","2606:4700:4700::1001","speed",""],
+["Cloudflare DoH/DoT","cloudflare-dns.com","privacy","ناونیشانی نهێنیکراو (شیفرکراو)"],["Cloudflare Family DoH","family.cloudflare-dns.com","family",""],
+["Cloudflare Security DoH","security.cloudflare-dns.com","security",""],
+["Google Public DNS","8.8.8.8","speed","متمانەپێکراویی بەرز"],["Google — لاوەکی","8.8.4.4","speed",""],
+["Google IPv6","2001:4860:4860::8888","speed",""],["Google IPv6 (لاوەکی)","2001:4860:4860::8844","speed",""],
+["Google DoH","dns.google","privacy",""],
+["Quad9","9.9.9.9","security","بلۆککردنی بەرنامەی زیانبەخش و فیشینگ"],["Quad9 — لاوەکی","149.112.112.112","security",""],
+["Quad9 بێ بلۆککردن","9.9.9.10","speed",""],["Quad9 بێ بلۆککردن (لاوەکی)","149.112.112.10","speed",""],
+["Quad9 IPv6","2620:fe::fe","security",""],["Quad9 IPv6 (لاوەکی)","2620:fe::9","security",""],
+["Quad9 DoH","dns.quad9.net","security",""],
+["AdGuard DNS","94.140.14.14","ads","بلۆککردنی ڕیکلام و شوێنکەوتن"],["AdGuard — لاوەکی","94.140.15.15","ads",""],
+["AdGuard بنەماڵەیی","94.140.14.15","family","ناوەڕۆکی گەورەسالانیش دەبلۆکێت"],["AdGuard بنەماڵەیی (لاوەکی)","94.140.15.16","family",""],
+["AdGuard بێ پاڵاوتن","94.140.14.140","speed",""],["AdGuard بێ پاڵاوتن (لاوەکی)","94.140.14.141","speed",""],
+["AdGuard DoH/DoT","dns.adguard-dns.com","ads",""],["AdGuard Family DoH","family.adguard-dns.com","family",""],
+["AdGuard Unfiltered DoH","unfiltered.adguard-dns.com","speed",""],
+["OpenDNS","208.67.222.222","security","پاڵاوتن و ناوەڕۆکی سەلامەت"],["OpenDNS — لاوەکی","208.67.220.220","security",""],
+["OpenDNS FamilyShield","208.67.222.123","family","بەخۆکار ناوەڕۆکی گەورەسالان دەبلۆکێت"],["OpenDNS FamilyShield (لاوەکی)","208.67.220.123","family",""],
+["CleanBrowsing ئاسایش","185.228.168.9","security","بلۆککردنی بەرنامەی زیانبەخش و فیشینگ"],["CleanBrowsing ئاسایش (لاوەکی)","185.228.169.9","security",""],
+["CleanBrowsing گەورەسالان","185.228.168.10","family","بلۆککردنی ناوەڕۆکی گەورەسالان زیاد دەکات"],["CleanBrowsing گەورەسالان (لاوەکی)","185.228.169.11","family",""],
+["CleanBrowsing بنەماڵەیی تەواو","185.228.168.168","family","سەختترین (زۆرترین سنووردارکردن)"],["CleanBrowsing بنەماڵەیی (لاوەکی)","185.228.169.168","family",""],
+["Comodo Secure DNS","8.26.56.26","security",""],["Comodo — لاوەکی","8.20.247.20","security",""],
+["Verisign","64.6.64.6","privacy","بێ تۆمارکردنی داتا"],["Verisign — لاوەکی","64.6.65.6","privacy",""],
+["Level3 / CenturyLink","4.2.2.1","speed",""],["Level3 — لاوەکی","4.2.2.2","speed",""],
+["Yandex DNS سەرەکی","77.88.8.8","speed",""],["Yandex — لاوەکی","77.88.8.1","speed",""],
+["Yandex سەلامەت","77.88.8.88","security","بلۆککردنی ماڵپەڕی زیانبەخش و فێڵ"],["Yandex سەلامەت (لاوەکی)","77.88.8.2","security",""],
+["Yandex بنەماڵەیی","77.88.8.7","family",""],["Yandex بنەماڵەیی (لاوەکی)","77.88.8.3","family",""],
+["DNS.WATCH","84.200.69.80","privacy","بێ پاڵاوتن یان تۆمارکردن"],["DNS.WATCH — لاوەکی","84.200.70.40","privacy",""],
+["Neustar UltraDNS","156.154.70.1","speed",""],["Neustar — لاوەکی","156.154.71.1","speed",""],
+["Neustar پاراستن","156.154.70.2","security",""],["Neustar پاراستن (لاوەکی)","156.154.71.2","security",""],
+["Neustar بنەماڵەیی","156.154.70.3","family",""],["Neustar بنەماڵەیی (لاوەکی)","156.154.71.3","family",""],
+["SafeDNS","195.46.39.39","security",""],["SafeDNS — لاوەکی","195.46.39.40","security",""],
+["Alternate DNS","76.76.19.19","ads","بلۆککردنی ڕیکلامی بەخۆڕایی"],["Alternate DNS — لاوەکی","76.223.122.150","ads",""],
+["Hurricane Electric","74.82.42.42","speed",""],
+["114DNS (چین)","114.114.114.114","regional",""],["114DNS — لاوەکی","114.114.115.115","regional",""],
+["Baidu DNS","180.76.76.76","regional",""],
+["AliDNS (علی بابا)","223.5.5.5","regional",""],["AliDNS — لاوەکی","223.6.6.6","regional",""],
+["DNSPod (Tencent)","119.29.29.29","regional",""],
+["Quad101 (تایوان)","101.101.101.101","regional","بێ تۆمارکردنی داتا"],["Quad101 — لاوەکی","101.102.103.104","regional",""],
+["CIRA Canadian Shield","149.112.121.10","security",""],["CIRA بنەماڵەیی","149.112.121.20","family",""],["CIRA گەورەسالان","149.112.121.30","family",""],
+["Mullvad DNS","194.242.2.2","privacy","بێ تۆمارکردن، تایبەتمەندی توند"],["Mullvad بلۆککردنی ڕیکلام","194.242.2.3","ads",""],["Mullvad بلۆککردنی فراوان","194.242.2.4","ads",""],
+["UncensoredDNS","91.239.100.100","privacy",""],["UncensoredDNS — لاوەکی","89.233.43.71","privacy",""],
+["Digitale Gesellschaft (سویسرا)","185.95.218.42","privacy",""],["Digitale Gesellschaft — لاوەکی","185.95.218.43","privacy",""],
+["FDN (فەرەنسا)","80.67.169.12","privacy",""],["FDN — لاوەکی","80.67.169.40","privacy",""],
+["Freenom World","80.80.80.80","speed",""],["Freenom World — لاوەکی","80.80.81.81","speed",""],
+["NextDNS (پێویستی بە هەژماری بەخۆڕایی هەیە)","dns.nextdns.io","privacy","کۆنترۆڵی تەواو دوای خۆتۆمارکردن"],
+["ControlD (بەخۆڕایی، تایبەتکراو)","freedns.controld.com","privacy",""]
+];
+
+const TAGS = {speed:"خێرایی",ads:"بلۆککردنی ڕیکلام",security:"ئاسایش",family:"بنەماڵەیی",privacy:"تایبەتمەندی",regional:"ناوچەیی"};
+const grid = document.getElementById('grid');
+const countEl = document.getElementById('count');
+const emptyEl = document.getElementById('empty');
+document.getElementById('totalStat').textContent = DATA.length;
+
+let activeTag = 'all';
+let query = '';
+
+function render(){
+  const q = query.trim().toLowerCase();
+  const items = DATA.filter(d=>{
+    const matchesTag = activeTag==='all' || d[2]===activeTag;
+    const matchesQ = !q || d[0].toLowerCase().includes(q) || d[1].toLowerCase().includes(q);
+    return matchesTag && matchesQ;
+  });
+  grid.innerHTML = items.map((d,i)=>`
+    <div class="card">
+      <div class="card-top">
+        <span class="card-name">${d[0]}</span>
+        <span class="badge ${d[2]}">${TAGS[d[2]]}</span>
+      </div>
+      <div class="card-value mono">${d[1]}</div>
+      <div class="card-bottom">
+        <span class="card-desc">${d[3]||''}</span>
+        <button class="copy-btn" data-value="${d[1]}">کۆپی</button>
+      </div>
+    </div>
+  `).join('');
+  countEl.textContent = `${items.length} لە ${DATA.length} ناونیشان`;
+  emptyEl.style.display = items.length ? 'none' : 'block';
+}
+
+document.getElementById('tabs').addEventListener('click', e=>{
+  const btn = e.target.closest('.tab');
+  if(!btn) return;
+  document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-pressed','false'));
+  btn.setAttribute('aria-pressed','true');
+  activeTag = btn.dataset.tag;
+  render();
+});
+
+document.getElementById('search').addEventListener('input', e=>{
+  query = e.target.value;
+  render();
+});
+
+grid.addEventListener('click', async e=>{
+  const btn = e.target.closest('.copy-btn');
+  if(!btn) return;
+  const val = btn.dataset.value;
+  try{
+    await navigator.clipboard.writeText(val);
+  }catch(err){
+    const ta=document.createElement('textarea');
+    ta.value=val;document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy');}catch(e2){}
+    document.body.removeChild(ta);
+  }
+  const original = btn.textContent;
+  btn.textContent='✓ کۆپی کرا';
+  btn.classList.add('copied');
+  setTimeout(()=>{btn.textContent=original;btn.classList.remove('copied');},1400);
+});
+
+render();
+</script>
+</body>
+</html>
