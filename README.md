@@ -158,6 +158,6 @@ Welcome to **Khalid Kurdo**, a Kurdish website featuring a variety of content, i
 
 <div align="center">
 
-**© 2025 Khalid Kurdo** — All rights reserved
+**© 2026 Khalid Kurdo** — All rights reserved
 
 </div>
