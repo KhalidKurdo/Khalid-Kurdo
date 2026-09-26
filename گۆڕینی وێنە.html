@@ -1,0 +1,1805 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#6366f1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>ئامرازەکانی وێنە</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    font-family: 'Noto Kufi Arabic', Tahoma, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+    background: linear-gradient(135deg, #eef2ff 0%, #fce7f3 100%);
+    background-attachment: fixed;
+    color: #0f172a;
+    min-height: 100vh;
+    min-height: 100dvh;
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Header */
+.hero {
+    text-align: center;
+    padding: clamp(1.5rem, 5vw, 3rem) 1rem clamp(1rem, 3vw, 2rem);
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.hero h1 {
+    font-size: clamp(1.4rem, 5vw, 2.5rem);
+    font-weight: 700;
+    margin-bottom: clamp(0.5rem, 2vw, 0.8rem);
+    background: linear-gradient(135deg, #4f46e5, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.3;
+}
+
+.hero p { 
+    color: #64748b; 
+    font-size: clamp(0.85rem, 2.5vw, 1rem);
+    padding: 0 0.5rem;
+}
+
+/* Grid - Responsive */
+.tools-section { 
+    max-width: 1200px; 
+    margin: 0 auto; 
+    padding: clamp(0.5rem, 2vw, 1rem) clamp(0.8rem, 3vw, 1.5rem) clamp(2rem, 6vw, 4rem);
+}
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 160px), 1fr));
+    gap: clamp(0.6rem, 2vw, 1rem);
+}
+
+.tool-card {
+    background: #fff;
+    border-radius: clamp(14px, 2vw, 18px);
+    padding: clamp(1rem, 3vw, 1.5rem) clamp(0.5rem, 2vw, 1rem);
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.06);
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.tool-card:hover, .tool-card:active {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 30px rgba(99, 102, 241, 0.15);
+    border-color: #a5b4fc;
+}
+
+.tool-icon {
+    width: clamp(48px, 12vw, 60px);
+    height: clamp(48px, 12vw, 60px);
+    margin: 0 auto clamp(8px, 2vw, 12px);
+    border-radius: clamp(12px, 3vw, 18px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(1.2rem, 3.5vw, 1.7rem);
+    color: #fff;
+    transition: transform 0.3s;
+}
+
+.tool-card:hover .tool-icon, .tool-card:active .tool-icon {
+    transform: scale(1.08) rotate(-5deg);
+}
+
+.icon-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+.icon-purple { background: linear-gradient(135deg, #a855f7, #7c3aed); }
+.icon-pink { background: linear-gradient(135deg, #ec4899, #be185d); }
+.icon-green { background: linear-gradient(135deg, #10b981, #047857); }
+.icon-orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.icon-cyan { background: linear-gradient(135deg, #06b6d4, #0e7490); }
+.icon-red { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+.icon-indigo { background: linear-gradient(135deg, #6366f1, #4338ca); }
+.icon-teal { background: linear-gradient(135deg, #14b8a6, #0f766e); }
+.icon-rose { background: linear-gradient(135deg, #f43f5e, #be123c); }
+.icon-amber { background: linear-gradient(135deg, #f59e0b, #b45309); }
+.icon-slate { background: linear-gradient(135deg, #64748b, #334155); }
+
+.tool-card h3 { 
+    font-size: clamp(0.78rem, 2.3vw, 0.95rem); 
+    margin-bottom: 4px; 
+    color: #0f172a;
+    line-height: 1.3;
+}
+
+.tool-card p { 
+    font-size: clamp(0.65rem, 1.8vw, 0.72rem); 
+    color: #64748b; 
+    line-height: 1.4;
+}
+
+/* Modal - Responsive */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(0.5rem, 2vw, 1rem);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.modal.active { display: flex; }
+
+.modal-content {
+    background: #fff;
+    border-radius: clamp(16px, 3vw, 22px);
+    padding: clamp(1rem, 3vw, 1.5rem);
+    max-width: 850px;
+    width: 100%;
+    max-height: 95vh;
+    max-height: 95dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    animation: slideUp 0.3s ease;
+    position: relative;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: clamp(0.8rem, 2vw, 1.2rem);
+    padding-bottom: clamp(0.7rem, 2vw, 1rem);
+    border-bottom: 2px solid #f1f5f9;
+    gap: 0.5rem;
+}
+
+.modal-header h2 {
+    font-size: clamp(0.95rem, 3vw, 1.2rem);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #0f172a;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.modal-header h2 i { color: #6366f1; flex-shrink: 0; }
+
+.close-btn {
+    background: #f1f5f9;
+    border: none;
+    width: clamp(32px, 8vw, 36px);
+    height: clamp(32px, 8vw, 36px);
+    border-radius: 50%;
+    cursor: pointer;
+    color: #64748b;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-btn:hover { background: #ef4444; color: #fff; }
+
+/* Upload */
+.upload-area {
+    border: 2px dashed #cbd5e1;
+    border-radius: clamp(12px, 2vw, 16px);
+    padding: clamp(1.5rem, 5vw, 2.5rem) 1rem;
+    text-align: center;
+    cursor: pointer;
+    background: #f8fafc;
+    transition: all 0.25s;
+}
+
+.upload-area:hover, .upload-area:active, .upload-area.dragover {
+    border-color: #6366f1;
+    background: #eef2ff;
+}
+
+.upload-area i {
+    font-size: clamp(2rem, 6vw, 2.5rem);
+    color: #6366f1;
+    margin-bottom: clamp(0.5rem, 2vw, 0.8rem);
+    display: block;
+}
+
+.upload-area p { 
+    color: #0f172a; 
+    font-weight: 600; 
+    margin-bottom: 4px;
+    font-size: clamp(0.85rem, 2.5vw, 1rem);
+}
+
+.upload-area span { color: #6366f1; text-decoration: underline; }
+.upload-area small { 
+    color: #94a3b8; 
+    font-size: clamp(0.7rem, 2vw, 0.8rem);
+    display: block;
+}
+
+/* HTML tabs */
+.html-tabs {
+    display: flex;
+    gap: 4px;
+    background: #f1f5f9;
+    padding: 4px;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+}
+
+.html-tab {
+    flex: 1;
+    padding: clamp(0.5rem, 2vw, 0.6rem) 0.3rem;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: clamp(0.72rem, 2vw, 0.85rem);
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.html-tab i { font-size: clamp(0.8rem, 2vw, 1rem); }
+
+.html-tab.active {
+    background: #fff;
+    color: #6366f1;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.15);
+}
+
+.html-panel { display: none; }
+.html-panel.active { display: block; }
+
+.html-textarea {
+    width: 100%;
+    min-height: clamp(120px, 30vw, 150px);
+    padding: clamp(0.7rem, 2vw, 0.8rem);
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-family: 'Courier New', monospace;
+    font-size: clamp(0.75rem, 2vw, 0.85rem);
+    resize: vertical;
+    outline: none;
+    direction: ltr;
+    text-align: left;
+    background: #f8fafc;
+    transition: border-color 0.2s;
+}
+
+.html-textarea:focus { border-color: #6366f1; }
+
+.url-input {
+    width: 100%;
+    padding: clamp(0.7rem, 2vw, 0.9rem);
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: clamp(0.8rem, 2.3vw, 0.95rem);
+    outline: none;
+    direction: ltr;
+    text-align: left;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.url-input:focus { border-color: #6366f1; }
+
+.quick-urls { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+
+.quick-url-btn {
+    background: #eef2ff;
+    color: #4f46e5;
+    padding: clamp(0.3rem, 1.5vw, 0.35rem) clamp(0.7rem, 2vw, 0.8rem);
+    border-radius: 50px;
+    font-size: clamp(0.68rem, 1.9vw, 0.75rem);
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid #c7d2fe;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+
+.quick-url-btn:hover, .quick-url-btn:active { background: #6366f1; color: #fff; }
+
+.file-upload-box {
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: clamp(1.5rem, 4vw, 2rem) 1rem;
+    text-align: center;
+    cursor: pointer;
+    background: #f8fafc;
+    transition: all 0.25s;
+}
+
+.file-upload-box:hover, .file-upload-box:active { border-color: #6366f1; background: #eef2ff; }
+.file-upload-box i { font-size: clamp(1.5rem, 4vw, 2rem); color: #6366f1; margin-bottom: 8px; display: block; }
+.file-upload-box p { 
+    font-weight: 600; 
+    margin-bottom: 4px;
+    font-size: clamp(0.8rem, 2.3vw, 0.95rem);
+}
+.file-upload-box small { color: #94a3b8; font-size: clamp(0.68rem, 1.9vw, 0.75rem); }
+
+.file-info {
+    display: none;
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    border-radius: 10px;
+    padding: clamp(0.6rem, 2vw, 0.7rem);
+    margin-top: 0.8rem;
+    color: #047857;
+    font-weight: 600;
+    font-size: clamp(0.75rem, 2vw, 0.85rem);
+    align-items: center;
+    gap: 8px;
+    word-break: break-all;
+}
+
+.file-info.active { display: flex; }
+.file-info button { 
+    margin-right: auto; 
+    background: none; 
+    border: none; 
+    color: #b91c1c; 
+    cursor: pointer;
+    font-size: 1rem;
+    flex-shrink: 0;
+    padding: 4px;
+}
+
+.hint {
+    background: #eff6ff;
+    border-right: 3px solid #6366f1;
+    padding: clamp(0.6rem, 2vw, 0.7rem) clamp(0.7rem, 2vw, 0.9rem);
+    border-radius: 8px;
+    margin-top: 0.7rem;
+    font-size: clamp(0.7rem, 1.9vw, 0.78rem);
+    color: #1e40af;
+    line-height: 1.5;
+}
+
+/* Preview */
+.preview-area { display: none; margin-top: 1rem; }
+.preview-area.active { display: block; }
+
+.preview-box {
+    background: repeating-conic-gradient(#f1f5f9 0% 25%, #fff 0% 50%) 50% / 16px 16px;
+    border-radius: clamp(10px, 2vw, 14px);
+    padding: clamp(0.7rem, 2vw, 1rem);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: clamp(140px, 30vw, 180px);
+    max-height: 60vh;
+    overflow: auto;
+    border: 1px solid #e2e8f0;
+}
+
+.preview-box img, .preview-box canvas {
+    max-width: 100%;
+    max-height: 55vh;
+    border-radius: 8px;
+    object-fit: contain;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    display: block;
+}
+
+/* Controls */
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(0.5rem, 2vw, 0.7rem);
+    margin-top: 1rem;
+    padding: clamp(0.7rem, 2vw, 1rem);
+    background: #f8fafc;
+    border-radius: 12px;
+    justify-content: center;
+    align-items: center;
+}
+
+.ctrl-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff;
+    padding: clamp(0.35rem, 1.5vw, 0.4rem) clamp(0.6rem, 2vw, 0.8rem);
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    flex-wrap: wrap;
+}
+
+.ctrl-group label {
+    font-weight: 600;
+    font-size: clamp(0.75rem, 2vw, 0.82rem);
+    color: #0f172a;
+    white-space: nowrap;
+}
+
+.ctrl-group input[type="number"],
+.ctrl-group input[type="text"],
+.ctrl-group select {
+    padding: clamp(0.3rem, 1.5vw, 0.35rem) clamp(0.5rem, 1.5vw, 0.6rem);
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: clamp(0.75rem, 2vw, 0.82rem);
+    outline: none;
+    font-family: inherit;
+    max-width: clamp(70px, 20vw, 100px);
+    min-width: 0;
+}
+
+.ctrl-group input[type="range"] { 
+    width: clamp(70px, 20vw, 100px); 
+    accent-color: #6366f1;
+    cursor: pointer;
+}
+
+.ctrl-group input[type="color"] { 
+    width: clamp(30px, 8vw, 35px); 
+    height: clamp(26px, 7vw, 30px); 
+    border: none; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    background: none;
+    padding: 0;
+}
+
+.ctrl-group input[type="checkbox"] { accent-color: #6366f1; }
+
+/* Buttons */
+.btn {
+    padding: clamp(0.55rem, 2vw, 0.65rem) clamp(1rem, 3vw, 1.5rem);
+    border: none;
+    border-radius: 50px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: clamp(0.78rem, 2.2vw, 0.88rem);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.25s;
+    font-family: inherit;
+    white-space: nowrap;
+    touch-action: manipulation;
+}
+
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-primary {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: #fff;
+    box-shadow: 0 6px 15px -3px rgba(99, 102, 241, 0.4);
+}
+
+.btn-primary:hover:not(:disabled), .btn-primary:active:not(:disabled) { 
+    transform: translateY(-2px); 
+    box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.5); 
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #10b981, #047857);
+    color: #fff;
+    box-shadow: 0 6px 15px -3px rgba(16, 185, 129, 0.4);
+}
+
+.btn-success:hover:not(:disabled), .btn-success:active:not(:disabled) { 
+    transform: translateY(-2px); 
+    box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.5); 
+}
+
+.btn-secondary {
+    background: #fff;
+    color: #0f172a;
+    border: 2px solid #e2e8f0;
+}
+
+.btn-secondary:hover:not(:disabled), .btn-secondary:active:not(:disabled) { 
+    background: #f1f5f9; 
+    border-color: #6366f1; 
+    color: #6366f1; 
+}
+
+.btn-big {
+    padding: clamp(0.75rem, 2.5vw, 0.9rem) clamp(1.5rem, 4vw, 2.5rem);
+    font-size: clamp(0.85rem, 2.5vw, 1rem);
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: clamp(0.5rem, 2vw, 0.7rem);
+    margin-top: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.action-buttons .btn { flex: 1; min-width: 120px; }
+
+/* Toast */
+.toast {
+    position: fixed;
+    bottom: max(20px, env(safe-area-inset-bottom, 20px));
+    left: 50%;
+    transform: translateX(-50%) translateY(120px);
+    background: #0f172a;
+    color: #fff;
+    padding: clamp(0.7rem, 2vw, 0.9rem) clamp(1rem, 3vw, 1.4rem);
+    border-radius: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.25);
+    z-index: 9999;
+    opacity: 0;
+    transition: all 0.4s ease;
+    pointer-events: none;
+    font-size: clamp(0.8rem, 2vw, 0.9rem);
+    max-width: calc(100vw - 2rem);
+    text-align: center;
+    word-break: break-word;
+}
+
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+.toast.success { background: linear-gradient(135deg, #10b981, #047857); }
+.toast.error { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+.toast.info { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+
+/* Render target */
+#htmlRenderTarget {
+    position: absolute;
+    left: -99999px;
+    top: 0;
+    background: #fff;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    padding: clamp(1rem, 3vw, 1.5rem);
+    color: #64748b;
+    font-size: clamp(0.72rem, 2vw, 0.82rem);
+}
+
+/* ============ تحسينات الجوال ============ */
+@media (max-width: 640px) {
+    .tools-grid { 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 0.6rem;
+    }
+    
+    .modal-content {
+        border-radius: 16px;
+        max-height: 96vh;
+        max-height: 96dvh;
+    }
+    
+    .html-tabs { 
+        flex-direction: row; 
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .html-tab {
+        min-width: fit-content;
+        padding: 0.55rem 0.7rem;
+    }
+    
+    .html-tab span { display: none; }
+    
+    .controls { 
+        flex-direction: column; 
+        align-items: stretch;
+        padding: 0.7rem;
+    }
+    
+    .ctrl-group { 
+        justify-content: space-between;
+        width: 100%;
+    }
+    
+    .ctrl-group input[type="number"],
+    .ctrl-group input[type="text"],
+    .ctrl-group select {
+        max-width: none;
+        flex: 1;
+        min-width: 60px;
+    }
+    
+    .ctrl-group input[type="range"] { width: 100px; }
+    
+    .action-buttons { 
+        flex-direction: column;
+    }
+    
+    .action-buttons .btn { 
+        width: 100%;
+    }
+    
+    .preview-box {
+        max-height: 45vh;
+        padding: 0.5rem;
+    }
+    
+    .preview-box img, .preview-box canvas {
+        max-height: 42vh;
+    }
+}
+
+/* للهواتف الصغيرة جداً */
+@media (max-width: 360px) {
+    .tools-grid { 
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+    
+    .tool-card {
+        padding: 0.8rem 0.4rem;
+    }
+    
+    .tool-icon {
+        width: 42px;
+        height: 42px;
+        font-size: 1.1rem;
+    }
+    
+    .tool-card h3 { font-size: 0.72rem; }
+    .tool-card p { font-size: 0.6rem; }
+}
+
+/* للتابلت */
+@media (min-width: 641px) and (max-width: 1024px) {
+    .tools-grid { 
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* للحاسوب الكبير */
+@media (min-width: 1025px) {
+    .tools-grid { 
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* تحسينات إضافية للشاشات اللمسية */
+@media (hover: none) {
+    .tool-card:hover { transform: none; }
+    .tool-card:active { 
+        transform: scale(0.97);
+        background: #f8fafc;
+    }
+}
+
+/* دعم الوضع المظلم (اختياري) */
+@media (prefers-color-scheme: dark) {
+    /* يبقى الموقع فاتح لأن التصميم يعتمد على الألوان الفاتحة */
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+    <h1>ئامرازەکانی وێنە</h1>
+    <p>هەموو ئامرازەکان بۆ دەستکاریکردنی وێنە بەخۆڕایی</p>
+</section>
+
+<section class="tools-section">
+    <div class="tools-grid">
+        <div class="tool-card" onclick="openTool('compress')">
+            <div class="tool-icon icon-blue"><i class="fas fa-compress-alt"></i></div>
+            <h3>پەستانی وێنە</h3>
+            <p>قەبارە کەم بکەرەوە</p>
+        </div>
+        <div class="tool-card" onclick="openTool('crop')">
+            <div class="tool-icon icon-purple"><i class="fas fa-crop-alt"></i></div>
+            <h3>بڕینی وێنە</h3>
+            <p>بەشەکان ببڕە</p>
+        </div>
+        <div class="tool-card" onclick="openTool('resize')">
+            <div class="tool-icon icon-pink"><i class="fas fa-expand"></i></div>
+            <h3>گۆڕینی قەبارە</h3>
+            <p>پانی و بەرزی</p>
+        </div>
+        <div class="tool-card" onclick="openTool('rotate')">
+            <div class="tool-icon icon-green"><i class="fas fa-rotate-right"></i></div>
+            <h3>سووڕاندنەوە</h3>
+            <p>بسووڕێنەوە</p>
+        </div>
+        <div class="tool-card" onclick="openTool('convert')">
+            <div class="tool-icon icon-orange"><i class="fas fa-file-image"></i></div>
+            <h3>گۆڕینی فۆرمات</h3>
+            <p>JPG، PNG، WebP</p>
+        </div>
+        <div class="tool-card" onclick="openTool('enhance')">
+            <div class="tool-icon icon-cyan"><i class="fas fa-magic"></i></div>
+            <h3>باشترکردنی وێنە</h3>
+            <p>ڕووناکی و ڕەنگ</p>
+        </div>
+        <div class="tool-card" onclick="openTool('watermark')">
+            <div class="tool-icon icon-indigo"><i class="fas fa-water"></i></div>
+            <h3>واتەرمارک</h3>
+            <p>دەق زیاد بکە</p>
+        </div>
+        <div class="tool-card" onclick="openTool('removebg')">
+            <div class="tool-icon icon-red"><i class="fas fa-eraser"></i></div>
+            <h3>لابردنی پاشبنە</h3>
+            <p>شەفاف بکە</p>
+        </div>
+        <div class="tool-card" onclick="openTool('merge')">
+            <div class="tool-icon icon-teal"><i class="fas fa-images"></i></div>
+            <h3>یەکخستنی وێنە</h3>
+            <p>چەند وێنە بەیەک</p>
+        </div>
+        <div class="tool-card" onclick="openTool('pdf')">
+            <div class="tool-icon icon-rose"><i class="fas fa-file-pdf"></i></div>
+            <h3>گۆڕین بۆ PDF</h3>
+            <p>PDF دروست بکە</p>
+        </div>
+        <div class="tool-card" onclick="openTool('frame')">
+            <div class="tool-icon icon-slate"><i class="fas fa-square"></i></div>
+            <h3>زیادکردنی چوارچێوە</h3>
+            <p>چوارچێوەی جوان</p>
+        </div>
+        <div class="tool-card" onclick="openTool('html2img')">
+            <div class="tool-icon icon-amber"><i class="fas fa-code"></i></div>
+            <h3>HTML بۆ وێنە</h3>
+            <p>کۆد، فایل، لینک</p>
+        </div>
+    </div>
+</section>
+
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i id="modalIcon" class="fas fa-image"></i> <span id="modalTitle">ئامراز</span></h2>
+            <button class="close-btn" onclick="closeModal()"><i class="fas fa-times"></i></button>
+        </div>
+
+        <div class="upload-area" id="uploadArea">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>وێنەکەت لێرە دابنێ یان <span>کرتە بکە</span></p>
+            <small>JPG، PNG، WebP، GIF • زۆرترین 20MB</small>
+            <input type="file" id="fileInput" accept="image/*" hidden>
+        </div>
+
+        <div id="htmlInputArea" style="display:none;">
+            <div class="html-tabs">
+                <button class="html-tab active" data-tab="code" onclick="switchTab('code')">
+                    <i class="fas fa-keyboard"></i> <span>کۆد</span>
+                </button>
+                <button class="html-tab" data-tab="file" onclick="switchTab('file')">
+                    <i class="fas fa-file-upload"></i> <span>فایل</span>
+                </button>
+                <button class="html-tab" data-tab="url" onclick="switchTab('url')">
+                    <i class="fas fa-link"></i> <span>لینک</span>
+                </button>
+            </div>
+
+            <div class="html-panel active" data-panel="code">
+                <textarea class="html-textarea" id="htmlCode" placeholder="&lt;div style=&quot;padding:40px;background:linear-gradient(135deg,#6366f1,#ec4899);color:white;border-radius:20px;text-align:center;font-family:sans-serif&quot;&gt;
+  &lt;h1 style=&quot;margin:0&quot;&gt;سڵاو جیهان!&lt;/h1&gt;
+  &lt;p&gt;ئەمە HTML ە.&lt;/p&gt;
+&lt;/div&gt;"></textarea>
+                <div class="hint"><i class="fas fa-lightbulb"></i> کۆدی HTML بنووسە. CSS دەتوانرێت لە <code>style=""</code> دابنرێت.</div>
+            </div>
+
+            <div class="html-panel" data-panel="file">
+                <div class="file-upload-box" id="htmlFileBox">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>فایلی HTML لێرە دابنێ یان <span style="color:#6366f1;text-decoration:underline">کرتە بکە</span></p>
+                    <small>.html، .htm، .txt • زۆرترین 2MB</small>
+                    <input type="file" id="htmlFileInput" accept=".html,.htm,.txt" hidden>
+                </div>
+                <div class="file-info" id="htmlFileInfo">
+                    <i class="fas fa-check-circle"></i>
+                    <span id="htmlFileName">file.html</span>
+                    <button onclick="removeHtmlFile()"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+
+            <div class="html-panel" data-panel="url">
+                <input type="url" class="url-input" id="htmlUrl" placeholder="https://example.com">
+                <div class="quick-urls">
+                    <button class="quick-url-btn" onclick="document.getElementById('htmlUrl').value='https://example.com'">example.com</button>
+                    <button class="quick-url-btn" onclick="document.getElementById('htmlUrl').value='https://wikipedia.org'">wikipedia.org</button>
+                </div>
+                <div class="hint"><i class="fas fa-exclamation-triangle" style="color:#f59e0b"></i> بەهۆی CORS، هەندێک ماڵپەڕ ڕێگە نادەن. باشترە کۆد یان فایل بەکاربهێنیت.</div>
+            </div>
+
+            <div class="controls" id="htmlControls">
+                <div class="ctrl-group">
+                    <label>پانی:</label>
+                    <input type="number" id="htmlW" value="800" min="200" max="3000">
+                </div>
+                <div class="ctrl-group">
+                    <label>پاشبنە:</label>
+                    <input type="color" id="htmlBg" value="#ffffff">
+                </div>
+                <div class="ctrl-group">
+                    <label>پێوانە:</label>
+                    <select id="htmlScale">
+                        <option value="1">1x</option>
+                        <option value="2" selected>2x</option>
+                        <option value="3">3x</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="btn btn-primary btn-big" id="htmlConvertBtn" onclick="convertHtmlToImage()">
+                <i class="fas fa-magic"></i> دروستکردنی وێنە
+            </button>
+        </div>
+
+        <div class="preview-area" id="previewArea">
+            <div class="preview-box" id="previewBox"></div>
+            <div class="controls" id="controls"></div>
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="resetTool()"><i class="fas fa-redo"></i> گۆڕین</button>
+                <button class="btn btn-success" onclick="downloadResult()"><i class="fas fa-download"></i> داگرتن</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div id="htmlRenderTarget"></div>
+
+<footer class="footer">
+    <p>© 2025 ئامرازەکانی وێنە • بەخۆڕایی بۆ هەمیشە</p>
+</footer>
+
+<script>
+/* ============ الحالة العامة ============ */
+let currentTool = null;
+let sourceImage = null;
+let sourceImages = [];
+let resultBlob = null;
+let resultExt = 'png';
+let uploadedHtmlContent = null;
+let uploadedHtmlName = '';
+
+/* ============ فتح الأداة ============ */
+function openTool(tool) {
+    currentTool = tool;
+    resetTool();
+    
+    const configs = {
+        compress:   { title: 'پەستانی وێنە',           icon: 'fa-compress-alt', multi: false },
+        crop:       { title: 'بڕینی وێنە',              icon: 'fa-crop-alt',     multi: false },
+        resize:     { title: 'گۆڕینی قەبارە',          icon: 'fa-expand',       multi: false },
+        rotate:     { title: 'سووڕاندنەوە',            icon: 'fa-rotate-right', multi: false },
+        convert:    { title: 'گۆڕینی فۆرمات',          icon: 'fa-file-image',   multi: false },
+        enhance:    { title: 'باشترکردنی وێنە',         icon: 'fa-magic',        multi: false },
+        watermark:  { title: 'واتەرمارک',              icon: 'fa-water',        multi: false },
+        removebg:   { title: 'لابردنی پاشبنە',          icon: 'fa-eraser',       multi: false },
+        merge:      { title: 'یەکخستنی وێنە',          icon: 'fa-images',       multi: true  },
+        pdf:        { title: 'گۆڕین بۆ PDF',           icon: 'fa-file-pdf',     multi: true  },
+        frame:      { title: 'زیادکردنی چوارچێوە',      icon: 'fa-square',       multi: false },
+        html2img:   { title: 'HTML بۆ وێنە',           icon: 'fa-code',         multi: false, html: true }
+    };
+    
+    const cfg = configs[tool];
+    document.getElementById('modalTitle').textContent = cfg.title;
+    document.getElementById('modalIcon').className = 'fas ' + cfg.icon;
+    
+    const uploadArea = document.getElementById('uploadArea');
+    const htmlArea = document.getElementById('htmlInputArea');
+    
+    if (cfg.html) {
+        uploadArea.style.display = 'none';
+        htmlArea.style.display = 'block';
+    } else {
+        uploadArea.style.display = 'block';
+        htmlArea.style.display = 'none';
+        document.getElementById('fileInput').multiple = !!cfg.multi;
+    }
+    
+    document.getElementById('modal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+}
+
+function closeModal() {
+    document.getElementById('modal').classList.remove('active');
+    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.width = '';
+    resetTool();
+}
+
+function resetTool() {
+    sourceImage = null;
+    sourceImages = [];
+    resultBlob = null;
+    uploadedHtmlContent = null;
+    uploadedHtmlName = '';
+    document.getElementById('fileInput').value = '';
+    document.getElementById('htmlFileInput').value = '';
+    document.getElementById('htmlCode').value = '';
+    document.getElementById('htmlUrl').value = '';
+    document.getElementById('previewArea').classList.remove('active');
+    document.getElementById('previewBox').innerHTML = '';
+    document.getElementById('controls').innerHTML = '';
+    document.getElementById('htmlFileInfo').classList.remove('active');
+    document.getElementById('uploadArea').style.display = 'block';
+    document.getElementById('htmlInputArea').style.display = 'none';
+    document.getElementById('htmlRenderTarget').innerHTML = '';
+    switchTab('code');
+}
+
+/* ============ رفع الصور ============ */
+const uploadArea = document.getElementById('uploadArea');
+const fileInput = document.getElementById('fileInput');
+
+uploadArea.addEventListener('click', () => fileInput.click());
+uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+uploadArea.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadArea.classList.remove('dragover');
+    handleFiles(Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/')));
+});
+fileInput.addEventListener('change', e => handleFiles(Array.from(e.target.files)));
+
+async function handleFiles(files) {
+    if (!files.length) return;
+    for (const f of files) {
+        if (f.size > 20 * 1024 * 1024) {
+            showToast('فایل زۆر گەورەیە: ' + f.name, 'error');
+            return;
+        }
+    }
+    
+    try {
+        const images = await Promise.all(files.map(loadImageFile));
+        
+        if (files.length > 1 && ['merge', 'pdf'].includes(currentTool)) {
+            sourceImages = images;
+            showMultiplePreview();
+        } else {
+            sourceImage = images[0];
+            showSinglePreview();
+        }
+        
+        document.getElementById('uploadArea').style.display = 'none';
+        document.getElementById('previewArea').classList.add('active');
+        buildControls();
+    } catch (err) {
+        console.error(err);
+        showToast('هەڵە لە خوێندنەوەی وێنە', 'error');
+    }
+}
+
+function loadImageFile(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = e => {
+            const img = new Image();
+            img.onload = () => resolve({ img, file });
+            img.onerror = reject;
+            img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+function showSinglePreview() {
+    const box = document.getElementById('previewBox');
+    box.innerHTML = '';
+    const canvas = drawImageToCanvas(sourceImage.img, 400);
+    box.appendChild(canvas);
+}
+
+function showMultiplePreview() {
+    const box = document.getElementById('previewBox');
+    box.innerHTML = '';
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;justify-content:center;width:100%';
+    sourceImages.forEach(item => {
+        wrap.appendChild(drawImageToCanvas(item.img, 120));
+    });
+    box.appendChild(wrap);
+}
+
+function drawImageToCanvas(img, maxSize = 400) {
+    const canvas = document.createElement('canvas');
+    let w = img.width, h = img.height;
+    if (maxSize) {
+        const ratio = Math.min(maxSize / w, maxSize / h, 1);
+        w = Math.round(w * ratio);
+        h = Math.round(h * ratio);
+    }
+    canvas.width = w;
+    canvas.height = h;
+    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+    return canvas;
+}
+
+function updatePreview(canvas) {
+    const box = document.getElementById('previewBox');
+    box.innerHTML = '';
+    const preview = drawImageToCanvas(canvas, 500);
+    box.appendChild(preview);
+}
+
+/* ============ عناصر التحكم ============ */
+function buildControls() {
+    const c = document.getElementById('controls');
+    c.innerHTML = '';
+    
+    switch (currentTool) {
+        case 'compress':
+            c.innerHTML = `
+                <div class="ctrl-group">
+                    <label>کوالیتی:</label>
+                    <input type="range" id="cQuality" min="10" max="100" value="70">
+                    <span id="cQualityVal">70%</span>
+                </div>
+                <button class="btn btn-primary" onclick="doCompress()"><i class="fas fa-compress-alt"></i> پەستان</button>
+            `;
+            document.getElementById('cQuality').oninput = e => {
+                document.getElementById('cQualityVal').textContent = e.target.value + '%';
+            };
+            break;
+            
+        case 'crop':
+            c.innerHTML = `
+                <div class="ctrl-group"><label>X:</label><input type="number" id="crX" value="0" min="0"></div>
+                <div class="ctrl-group"><label>Y:</label><input type="number" id="crY" value="0" min="0"></div>
+                <div class="ctrl-group"><label>پانی:</label><input type="number" id="crW" value="${sourceImage.img.width}" min="1"></div>
+                <div class="ctrl-group"><label>بەرزی:</label><input type="number" id="crH" value="${sourceImage.img.height}" min="1"></div>
+                <button class="btn btn-primary" onclick="doCrop()"><i class="fas fa-crop-alt"></i> بڕین</button>
+            `;
+            break;
+            
+        case 'resize':
+            const ratio = sourceImage.img.width / sourceImage.img.height;
+            c.innerHTML = `
+                <div class="ctrl-group"><label>پانی:</label><input type="number" id="rsW" value="${sourceImage.img.width}" min="1"></div>
+                <div class="ctrl-group"><label>بەرزی:</label><input type="number" id="rsH" value="${sourceImage.img.height}" min="1"></div>
+                <div class="ctrl-group"><label><input type="checkbox" id="rsKeep" checked> ڕێژە</label></div>
+                <button class="btn btn-primary" onclick="doResize()"><i class="fas fa-expand"></i> گۆڕین</button>
+            `;
+            const rsW = document.getElementById('rsW');
+            const rsH = document.getElementById('rsH');
+            const rsKeep = document.getElementById('rsKeep');
+            rsW.oninput = () => { if (rsKeep.checked) rsH.value = Math.round(rsW.value / ratio); };
+            rsH.oninput = () => { if (rsKeep.checked) rsW.value = Math.round(rsH.value * ratio); };
+            break;
+            
+        case 'rotate':
+            c.innerHTML = `
+                <div class="ctrl-group">
+                    <label>گۆشە:</label>
+                    <select id="rotAngle">
+                        <option value="90">90°</option>
+                        <option value="180">180°</option>
+                        <option value="270">270°</option>
+                    </select>
+                </div>
+                <div class="ctrl-group">
+                    <label>فلێپ:</label>
+                    <select id="rotFlip">
+                        <option value="none">هیچ</option>
+                        <option value="h">ئاسۆیی</option>
+                        <option value="v">ستوونی</option>
+                        <option value="both">هەردووکیان</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="doRotate()"><i class="fas fa-rotate-right"></i> جێبەجێ</button>
+            `;
+            break;
+            
+        case 'convert':
+            c.innerHTML = `
+                <div class="ctrl-group">
+                    <label>فۆرمات:</label>
+                    <select id="cvFormat">
+                        <option value="image/jpeg">JPG</option>
+                        <option value="image/png">PNG</option>
+                        <option value="image/webp">WebP</option>
+                    </select>
+                </div>
+                <div class="ctrl-group"><label>کوالیتی:</label><input type="range" id="cvQ" min="10" max="100" value="90"><span id="cvQVal">90%</span></div>
+                <button class="btn btn-primary" onclick="doConvert()"><i class="fas fa-sync-alt"></i> گۆڕین</button>
+            `;
+            document.getElementById('cvQ').oninput = e => {
+                document.getElementById('cvQVal').textContent = e.target.value + '%';
+            };
+            break;
+            
+        case 'enhance':
+            c.innerHTML = `
+                <div class="ctrl-group"><label>ڕووناکی:</label><input type="range" id="enB" min="50" max="150" value="100"><span id="enBv">100</span></div>
+                <div class="ctrl-group"><label>کۆنتراست:</label><input type="range" id="enC" min="50" max="150" value="100"><span id="enCv">100</span></div>
+                <div class="ctrl-group"><label>ڕەنگ:</label><input type="range" id="enS" min="0" max="200" value="100"><span id="enSv">100</span></div>
+                <button class="btn btn-primary" onclick="doEnhance()"><i class="fas fa-magic"></i> باشترکردن</button>
+            `;
+            document.getElementById('enB').oninput = e => document.getElementById('enBv').textContent = e.target.value;
+            document.getElementById('enC').oninput = e => document.getElementById('enCv').textContent = e.target.value;
+            document.getElementById('enS').oninput = e => document.getElementById('enSv').textContent = e.target.value;
+            break;
+            
+        case 'watermark':
+            c.innerHTML = `
+                <div class="ctrl-group"><label>دەق:</label><input type="text" id="wmText" value="© ناوی تۆ"></div>
+                <div class="ctrl-group"><label>قەبارە:</label><input type="range" id="wmSize" min="10" max="100" value="30"><span id="wmSizeVal">30</span></div>
+                <div class="ctrl-group"><label>ڕەنگ:</label><input type="color" id="wmColor" value="#ffffff"></div>
+                <div class="ctrl-group">
+                    <label>شوێن:</label>
+                    <select id="wmPos">
+                        <option value="br">خوارەوە ڕاست</option>
+                        <option value="bl">خوارەوە چەپ</option>
+                        <option value="tr">سەرەوە ڕاست</option>
+                        <option value="tl">سەرەوە چەپ</option>
+                        <option value="center">ناوەڕاست</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="doWatermark()"><i class="fas fa-water"></i> زیادکردن</button>
+            `;
+            document.getElementById('wmSize').oninput = e => document.getElementById('wmSizeVal').textContent = e.target.value;
+            break;
+            
+        case 'removebg':
+            c.innerHTML = `
+                <div class="ctrl-group"><label>هەستیاری:</label><input type="range" id="bgTol" min="10" max="150" value="60"><span id="bgTolVal">60</span></div>
+                <button class="btn btn-primary" onclick="doRemoveBg()"><i class="fas fa-eraser"></i> لابردن</button>
+            `;
+            document.getElementById('bgTol').oninput = e => document.getElementById('bgTolVal').textContent = e.target.value;
+            break;
+            
+        case 'merge':
+            c.innerHTML = `
+                <div class="ctrl-group">
+                    <label>ئاراستە:</label>
+                    <select id="mgDir">
+                        <option value="v">ستوونی</option>
+                        <option value="h">ئاسۆیی</option>
+                        <option value="grid">تۆڕ</option>
+                    </select>
+                </div>
+                <div class="ctrl-group"><label>پاشبنە:</label><input type="color" id="mgBg" value="#ffffff"></div>
+                <button class="btn btn-primary" onclick="doMerge()"><i class="fas fa-images"></i> یەکخستن</button>
+            `;
+            break;
+            
+        case 'pdf':
+            c.innerHTML = `
+                <div class="ctrl-group">
+                    <label>ئاراستە:</label>
+                    <select id="pdfOri">
+                        <option value="p">ستوونی</option>
+                        <option value="l">ئاسۆیی</option>
+                    </select>
+                </div>
+                <div class="ctrl-group">
+                    <label>قەبارە:</label>
+                    <select id="pdfFmt">
+                        <option value="a4">A4</option>
+                        <option value="letter">Letter</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="doPDF()"><i class="fas fa-file-pdf"></i> PDF دروست بکە</button>
+            `;
+            break;
+            
+        case 'frame':
+            c.innerHTML = `
+                <div class="ctrl-group"><label>قەبارە:</label><input type="range" id="frSize" min="5" max="100" value="25"><span id="frSizeVal">25</span></div>
+                <div class="ctrl-group"><label>ڕەنگ:</label><input type="color" id="frColor" value="#6366f1"></div>
+                <div class="ctrl-group">
+                    <label>شێواز:</label>
+                    <select id="frStyle">
+                        <option value="solid">تەواو</option>
+                        <option value="double">دوو هێڵ</option>
+                        <option value="shadow">سێبەر</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="doFrame()"><i class="fas fa-square"></i> زیادکردن</button>
+            `;
+            document.getElementById('frSize').oninput = e => document.getElementById('frSizeVal').textContent = e.target.value;
+            break;
+    }
+}
+
+/* ============ تنفيذ الأدوات ============ */
+
+function doCompress() {
+    const q = parseInt(document.getElementById('cQuality').value) / 100;
+    const canvas = drawImageToCanvas(sourceImage.img, null);
+    canvas.toBlob(blob => {
+        resultBlob = blob;
+        resultExt = 'jpg';
+        updatePreview(canvas);
+        showToast(`قەبارە: ${(blob.size/1024).toFixed(1)} KB`, 'success');
+    }, 'image/jpeg', q);
+}
+
+function doCrop() {
+    const x = parseInt(document.getElementById('crX').value) || 0;
+    const y = parseInt(document.getElementById('crY').value) || 0;
+    const w = parseInt(document.getElementById('crW').value);
+    const h = parseInt(document.getElementById('crH').value);
+    
+    if (w <= 0 || h <= 0) { showToast('نرخەکان نادروستن', 'error'); return; }
+    
+    const finalW = Math.min(w, sourceImage.img.width - x);
+    const finalH = Math.min(h, sourceImage.img.height - y);
+    
+    const canvas = document.createElement('canvas');
+    canvas.width = finalW;
+    canvas.height = finalH;
+    canvas.getContext('2d').drawImage(sourceImage.img, x, y, finalW, finalH, 0, 0, finalW, finalH);
+    
+    canvas.toBlob(blob => {
+        resultBlob = blob;
+        resultExt = 'png';
+        updatePreview(canvas);
+        showToast('وێنە بڕدرا', 'success');
+    }, 'image/png');
+}
+
+function doResize() {
+    const w = parseInt(document.getElementById('rsW').value);
+    const h = parseInt(document.getElementById('rsH').value);
+    if (w <= 0 || h <= 0) { showToast('قەبارە نادروستە', 'error'); return; }
+    
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(sourceImage.img, 0, 0, w, h);
+    
+    canvas.toBlob(blob => {
+        resultBlob = blob;
+        resultExt = 'png';
+        updatePreview(canvas);
+        showToast(`قەبارە: ${w}×${h}`, 'success');
+    }, 'image/png');
+}
+
+function doRotate() {
+    const angle = parseInt(document.getElementById('rotAngle').value);
+    const flip = document.getElementById('rotFlip').value;
+    const rad = angle * Math.PI / 180;
+    const img = sourceImage.img;
+    
+    const cos = Math.abs(Math.cos(rad));
+    const sin = Math.abs(Math.sin(rad));
+    const newW = Math.round(img.width * cos + img.height * sin);
+    const newH = Math.round(img.width * sin + img.height * cos);
+    
+    const canvas = document.createElement('canvas');
+    canvas.width = newW;
+    canvas.height = newH;
+    const ctx = canvas.getContext('2d');
+    ctx.translate(newW / 2, newH / 2);
+    ctx.rotate(rad);
+    ctx.scale(flip === 'h' || flip === 'both' ? -1 : 1, flip === 'v' || flip === 'both' ? -1 : 1);
+    ctx.drawImage(img, -img.width / 2, -img.height / 2);
+    
+    canvas.toBlob(blob => {
+        resultBlob = blob;
+        resultExt = 'png';
+        updatePreview(canvas);
+        showToast('وێنە سووڕایەوە', 'success');
+    }, 'image/png');
+}
+
+function doConvert() {
+    const format = document.getElementById('cvFormat').value;
+    const q = parseInt(document.getElementById('cvQ').value) / 100;
+    const extMap = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' };
+    
+    const canvas = drawImageToCanvas(sourceImage.img, null);
+    canvas.toBlob(blob => {
+        resultBlob = blob;
+        resultExt = extMap[format];
+        updatePreview(canvas);
+        showToast(`گۆڕدرا بۆ ${extMap[format].toUpperCase()}`, 'success');
+    }, format, q);
+}
+
+function doEnhance() {
+    const b = parseInt(document.getElementById('enB').value) / 100;
+    const c = parseInt(document.getElementById('enC').value) / 100;
+    const s = parseInt(document.getElementById('enS').value) / 100;
+    
+    const canvas = drawImageToCanvas(sourceImage.img, null);
+    const ctx = canvas.getContext('2d');
+    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const d = imgData.data;
+    
+    for (let i = 0; i < d.length; i += 4) {
+        let r = d[i] * b, g = d[i+1] * b, bl = d[i+2] * b;
+        r = ((r / 255 - 0.5) * c + 0.5) * 255;
+        g = ((g / 255 - 0.5) * c + 0.5) * 255;
+        bl = ((bl / 255 - 0.5) * c + 0.5) * 255;
+        const gray = 0.299 * r + 0.587 * g + 0.114 * bl;
+        r = gray + (r - gray) * s;
+        g = gray + (g - gray) * s;
+        bl = gray + (bl - gray) * s;
+        d[i] = Math.max(0, Math.min(255, r));
+        d[i+1] = Math.max(0, Math.min(255, g));
+        d[i+2] = Math.max(0, Math.min(255, bl));
+    }
+    
+    ctx.putImageData(imgData, 0, 0);
+    canvas.toBlob(blob => {
+        resultBlob = blob;
+        resultExt = 'png';
+        updatePreview(canvas);
+        showToast('وێنە باشتر کرا', 'success');
+    }, 'image/png');
+}
+
+function doWatermark() {
+    const text = document.getElementById('wmText').value || '©';
+    const size = parseInt(document.getElementById('wmSize').value);
+    const color = document.getElementById('wmColor').value;
+    const pos = document.getElementById('wmPos').value;
+    
+    const canvas = drawImageToCanvas(sourceImage.img, null);
+    const ctx = canvas.getContext('2d');
+    ctx.font = `bold ${size}px 'Noto Kufi Arabic', sans-serif`;
+    ctx.fillStyle = color;
+    ctx.strokeStyle = 'rgba(0,0,0,0.6)';
+    ctx.lineWidth = 2;
+    ctx.textBaseline = 'middle';
+    
+    const tw = ctx.measureText(text).width;
+    const pad = 20;
+    let x, y;
+    
+    switch (pos) {
+        case 'br': x = canvas.width - tw - pad; y = canvas.height - size - pad; break;
+        case 'bl': x = pad; y = canvas.height - size - pad; break;
+        case 'tr': x = canvas.width - tw - pad; y = pad + size; break;
+        case 'tl': x = pad; y = pad + size; break;
+        default: x = (canvas.width - tw) / 2; y = canvas.height / 2;
+    }
+    
+    ctx.strokeText(text, x, y);
+    ctx.fillText(text, x, y);
+    
+    canvas.toBlob(blob => {
+        resultBlob = blob;
+        resultExt = 'png';
+        updatePreview(canvas);
+        showToast('واتەرمارک زیادکرا', 'success');
+    }, 'image/png');
+}
+
+function doRemoveBg() {
+    const tol = parseInt(document.getElementById('bgTol').value);
+    const canvas = drawImageToCanvas(sourceImage.img, null);
+    const ctx = canvas.getContext('2d');
+    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const d = imgData.data;
+    
+    const bgR = d[0], bgG = d[1], bgB = d[2];
+    
+    for (let i = 0; i < d.length; i += 4) {
+        const diff = Math.sqrt((d[i]-bgR)**2 + (d[i+1]-bgG)**2 + (d[i+2]-bgB)**2);
+        if (diff < tol) d[i+3] = 0;
+    }
+    
+    ctx.putImageData(imgData, 0, 0);
+    canvas.toBlob(blob => {
+        resultBlob = blob;
+        resultExt = 'png';
+        updatePreview(canvas);
+        showToast('پاشبنە لابرا', 'success');
+    }, 'image/png');
+}
+
+function doMerge() {
+    const dir = document.getElementById('mgDir').value;
+    const bg = document.getElementById('mgBg').value;
+    const imgs = sourceImages.map(s => s.img);
+    
+    if (!imgs.length) { showToast('وێنە هەڵبژێرە', 'error'); return; }
+    
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    if (dir === 'v') {
+        const w = Math.max(...imgs.map(i => i.width));
+        const h = imgs.reduce((s, i) => s + i.height, 0);
+        canvas.width = w;
+        canvas.height = h;
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, w, h);
+        let y = 0;
+        imgs.forEach(img => { ctx.drawImage(img, (w - img.width) / 2, y); y += img.height; });
+    } else if (dir === 'h') {
+        const w = imgs.reduce((s, i) => s + i.width, 0);
+        const h = Math.max(...imgs.map(i => i.height));
+        canvas.width = w;
+        canvas.height = h;
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, w, h);
+        let x = 0;
+        imgs.forEach(img => { ctx.drawImage(img, x, (h - img.height) / 2); x += img.width; });
+    } else {
+        const cols = Math.ceil(Math.sqrt(imgs.length));
+        const rows = Math.ceil(imgs.length / cols);
+        const cw = Math.max(...imgs.map(i => i.width));
+        const ch = Math.max(...imgs.map(i => i.height));
+        canvas.width = cols * cw;
+        canvas.height = rows * ch;
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        imgs.forEach((img, i) => {
+            const col = i % cols;
+            const row = Math.floor(i / cols);
+            ctx.drawImage(img, col * cw, row * ch);
+        });
+    }
+    
+    canvas.toBlob(blob => {
+        resultBlob = blob;
+        resultExt = 'png';
+        updatePreview(canvas);
+        showToast('یەکخران', 'success');
+    }, 'image/png');
+}
+
+async function doPDF() {
+    const { jsPDF } = window.jspdf;
+    const ori = document.getElementById('pdfOri').value;
+    const fmt = document.getElementById('pdfFmt').value;
+    
+    const pdf = new jsPDF({ orientation: ori === 'l' ? 'landscape' : 'portrait', unit: 'mm', format: fmt });
+    
+    for (let i = 0; i < sourceImages.length; i++) {
+        if (i > 0) pdf.addPage();
+        const img = sourceImages[i].img;
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        canvas.getContext('2d').drawImage(img, 0, 0);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+        
+        const pw = pdf.internal.pageSize.getWidth();
+        const ph = pdf.internal.pageSize.getHeight();
+        const ratio = Math.min(pw / img.width, ph / img.height);
+        const w = img.width * ratio;
+        const h = img.height * ratio;
+        
+        pdf.addImage(dataUrl, 'JPEG', (pw - w) / 2, (ph - h) / 2, w, h);
+    }
+    
+    const blob = pdf.output('blob');
+    resultBlob = blob;
+    resultExt = 'pdf';
+    showToast(`PDF دروستکرا (${sourceImages.length} لاپەڕە)`, 'success');
+    
+    document.getElementById('previewBox').innerHTML = `
+        <div style="text-align:center;padding:1.5rem">
+            <i class="fas fa-file-pdf" style="font-size:clamp(3rem,10vw,4rem);color:#ef4444"></i>
+            <p style="margin-top:1rem;font-weight:700">${sourceImages.length} لاپەڕە PDF</p>
+            <p style="color:#64748b;font-size:0.85rem">${(blob.size/1024).toFixed(1)} KB</p>
+        </div>
+    `;
+}
+
+function doFrame() {
+    const size = parseInt(document.getElementById('frSize').value);
+    const color = document.getElementById('frColor').value;
+    const style = document.getElementById('frStyle').value;
+    const img = sourceImage.img;
+    
+    const canvas = document.createElement('canvas');
+    let pad = size;
+    let extra = 0;
+    
+    if (style === 'double') { pad = size; extra = size / 2; }
+    if (style === 'shadow') { pad = size; extra = size / 2; }
+    
+    const totalPad = pad + extra;
+    canvas.width = img.width + totalPad * 2;
+    canvas.height = img.height + totalPad * 2;
+    const ctx = canvas.getContext('2d');
+    
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    if (style === 'shadow') {
+        ctx.shadowColor = 'rgba(0,0,0,0.5)';
+        ctx.shadowBlur = size;
+        ctx.shadowOffsetX = 5;
+        ctx.shadowOffsetY = 5;
+    }
+    
+    ctx.drawImage(img, totalPad, totalPad, img.width, img.height);
+    
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+    
+    if (style === 'double') {
+        ctx.strokeStyle = color === '#ffffff' ? '#000' : '#fff';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(totalPad - 6, totalPad - 6, img.width + 12, img.height + 12);
+    }
+    
+    canvas.toBlob(blob => {
+        resultBlob = blob;
+        resultExt = 'png';
+        updatePreview(canvas);
+        showToast('چوارچێوە زیادکرا', 'success');
+    }, 'image/png');
+}
+
+/* ============ HTML ============ */
+function switchTab(tab) {
+    document.querySelectorAll('.html-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+    document.querySelectorAll('.html-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === tab));
+}
+
+const htmlFileBox = document.getElementById('htmlFileBox');
+const htmlFileInput = document.getElementById('htmlFileInput');
+
+htmlFileBox.addEventListener('click', () => htmlFileInput.click());
+htmlFileBox.addEventListener('dragover', e => { e.preventDefault(); htmlFileBox.style.borderColor = '#6366f1'; });
+htmlFileBox.addEventListener('dragleave', () => htmlFileBox.style.borderColor = '#cbd5e1');
+htmlFileBox.addEventListener('drop', e => {
+    e.preventDefault();
+    htmlFileBox.style.borderColor = '#cbd5e1';
+    if (e.dataTransfer.files.length) loadHtmlFile(e.dataTransfer.files[0]);
+});
+htmlFileInput.addEventListener('change', e => { if (e.target.files.length) loadHtmlFile(e.target.files[0]); });
+
+function loadHtmlFile(file) {
+    if (file.size > 2 * 1024 * 1024) { showToast('فایل زۆر گەورەیە', 'error'); return; }
+    const reader = new FileReader();
+    reader.onload = e => {
+        uploadedHtmlContent = e.target.result;
+        uploadedHtmlName = file.name;
+        document.getElementById('htmlFileName').textContent = file.name;
+        document.getElementById('htmlFileInfo').classList.add('active');
+        showToast('فایل بارکرا: ' + file.name, 'success');
+    };
+    reader.readAsText(file, 'UTF-8');
+}
+
+function removeHtmlFile() {
+    uploadedHtmlContent = null;
+    uploadedHtmlName = '';
+    htmlFileInput.value = '';
+    document.getElementById('htmlFileInfo').classList.remove('active');
+}
+
+async function convertHtmlToImage() {
+    const activeTab = document.querySelector('.html-tab.active').dataset.tab;
+    const btn = document.getElementById('htmlConvertBtn');
+    btn.disabled = true;
+    
+    try {
+        let code = '';
+        
+        if (activeTab === 'code') {
+            code = document.getElementById('htmlCode').value.trim();
+            if (!code) { showToast('کۆد بنووسە', 'error'); btn.disabled = false; return; }
+        } else if (activeTab === 'file') {
+            if (!uploadedHtmlContent) { showToast('فایل هەڵبژێرە', 'error'); btn.disabled = false; return; }
+            code = uploadedHtmlContent;
+        } else {
+            const url = document.getElementById('htmlUrl').value.trim();
+            if (!url) { showToast('لینک بنووسە', 'error'); btn.disabled = false; return; }
+            await convertUrlToImage(url);
+            btn.disabled = false;
+            return;
+        }
+        
+        await convertCodeToImage(code);
+    } catch (err) {
+        console.error(err);
+        showToast('هەڵە: ' + err.message, 'error');
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+async function convertCodeToImage(code) {
+    const width = parseInt(document.getElementById('htmlW').value);
+    const bg = document.getElementById('htmlBg').value;
+    const scale = parseInt(document.getElementById('htmlScale').value);
+    const target = document.getElementById('htmlRenderTarget');
+    
+    target.innerHTML = '';
+    target.style.width = width + 'px';
+    target.style.background = bg;
+    target.style.padding = '20px';
+    target.style.direction = 'rtl';
+    target.style.fontFamily = "'Noto Kufi Arabic', sans-serif";
+    
+    let content = code;
+    if (/<html[\s>]/i.test(code)) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(code, 'text/html');
+        doc.querySelectorAll('style, link[rel="stylesheet"]').forEach(s => target.appendChild(s.cloneNode(true)));
+        if (doc.body) content = doc.body.innerHTML;
+    }
+    
+    const wrap = document.createElement('div');
+    wrap.innerHTML = content;
+    target.appendChild(wrap);
+    
+    const imgs = target.querySelectorAll('img');
+    await Promise.all(Array.from(imgs).map(img => new Promise(res => {
+        if (img.complete) return res();
+        img.onload = img.onerror = res;
+        setTimeout(res, 3000);
+    })));
+    
+    await new Promise(r => setTimeout(r, 300));
+    
+    const canvas = await html2canvas(target, {
+        scale: scale,
+        backgroundColor: bg,
+        useCORS: true,
+        allowTaint: true,
+        logging: false
+    });
+    
+    showHtmlResult(canvas);
+}
+
+async function convertUrlToImage(url) {
+    if (!/^https?:\/\//i.test(url)) { showToast('لینک دەبێت بە http دەست پێبکات', 'error'); return; }
+    
+    showToast('بارکردنی ماڵپەڕ...', 'info');
+    const iframe = document.createElement('iframe');
+    iframe.style.cssText = 'position:fixed;left:-99999px;width:1200px;height:800px;border:none';
+    iframe.src = url;
+    document.body.appendChild(iframe);
+    
+    try {
+        await new Promise((resolve, reject) => {
+            const t = setTimeout(() => reject(new Error('کاتی بارکردن تێپەڕی')), 15000);
+            iframe.onload = () => { clearTimeout(t); setTimeout(resolve, 1500); };
+            iframe.onerror = () => { clearTimeout(t); reject(new Error('هەڵە لە بارکردن')); };
+        });
+        
+        let doc;
+        try {
+            doc = iframe.contentDocument || iframe.contentWindow.document;
+            if (!doc || !doc.body) throw new Error('CORS');
+        } catch (e) {
+            throw new Error('ماڵپەڕ ڕێگە نادات (CORS). کۆد یان فایل بەکاربهێنە.');
+        }
+        
+        const width = parseInt(document.getElementById('htmlW').value);
+        const bg = document.getElementById('htmlBg').value;
+        const scale = parseInt(document.getElementById('htmlScale').value);
+        const target = document.getElementById('htmlRenderTarget');
+        
+        target.innerHTML = '';
+        target.style.width = width + 'px';
+        target.style.background = bg;
+        target.style.direction = 'ltr';
+        
+        doc.querySelectorAll('style').forEach(s => target.appendChild(s.cloneNode(true)));
+        doc.querySelectorAll('link[rel="stylesheet"]').forEach(l => target.appendChild(l.cloneNode(true)));
+        target.appendChild(doc.body.cloneNode(true));
+        
+        await new Promise(r => setTimeout(r, 800));
+        
+        const canvas = await html2canvas(target, {
+            scale: scale,
+            backgroundColor: bg,
+            useCORS: true,
+            allowTaint: true,
+            logging: false
+        });
+        
+        showHtmlResult(canvas);
+    } finally {
+        document.body.removeChild(iframe);
+    }
+}
+
+function showHtmlResult(canvas) {
+    const preview = drawImageToCanvas(canvas, 500);
+    document.getElementById('previewBox').innerHTML = '';
+    document.getElementById('previewBox').appendChild(preview);
+    document.getElementById('previewArea').classList.add('active');
+    
+    canvas.toBlob(blob => {
+        resultBlob = blob;
+        resultExt = 'png';
+        showToast(`وێنە دروستکرا (${canvas.width}×${canvas.height})`, 'success');
+    }, 'image/png');
+}
+
+/* ============ التحميل ============ */
+function downloadResult() {
+    if (!resultBlob) { showToast('سەرەتا ئامرازێک جێبەجێ بکە', 'error'); return; }
+    const url = URL.createObjectURL(resultBlob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `wena-${Date.now()}.${resultExt}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showToast('داگیرا', 'success');
+}
+
+/* ============ Toast ============ */
+let toastTimer;
+function showToast(msg, type = 'info') {
+    const toast = document.getElementById('toast');
+    clearTimeout(toastTimer);
+    toast.className = 'toast show ' + type;
+    const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle' };
+    toast.innerHTML = `<i class="fas ${icons[type]}"></i> <span>${msg}</span>`;
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+/* ============ إغلاق ============ */
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+document.getElementById('modal').addEventListener('click', e => {
+    if (e.target.id === 'modal') closeModal();
+});
+
+/* منع التكبير على الجوال عند النقر المزدوج */
+let lastTouch = 0;
+document.addEventListener('touchend', e => {
+    const now = Date.now();
+    if (now - lastTouch <= 300) e.preventDefault();
+    lastTouch = now;
+}, { passive: false });
+</script>
+</body>
+</html>
