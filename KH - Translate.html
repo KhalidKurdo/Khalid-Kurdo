@@ -1,0 +1,480 @@
+<!--
+  ==============================================================
+  وەرگێڕی زیرەک — المترجم الذكي (نسخة قابلة للتضمين / Blogger-ready)
+  ==============================================================
+  طريقة الإضافة في Blogger:
+  1) لوحة التحكم → التخطيط (Layout) → إضافة أداة (Add a Gadget)
+  2) اختر "HTML/JavaScript"
+  3) الصق كل هذا الكود كما هو، ثم احفظ.
+  هذا العنصر لا يحتوي على وسوم <html><head><body> ولا يفرض
+  خلفية على كامل الصفحة — يظهر كبطاقة (widget) داخل مكانه فقط.
+-->
+<div class="aitw-root" id="aitwRoot">
+
+  <header class="aitw-header">
+    <div class="aitw-eyebrow"><span class="aitw-dash"></span>وەرگێڕی ئۆنلاین بە زیرەیی دەستکرد</div>
+    <h1 class="aitw-h1">وەرگێڕی <span>خۆکار</span><br>المترجم الفوري بالذكاء الاصطناعي</h1>
+    <p class="aitw-sub">
+      دەق بنووسە یان بیپەیستە، یان فایلێک باربکە (txt, srt, ass...) — زمانی سەرچاوە و ئامانج هەڵبژێرە، وەرگێڕان بکە.
+      اكتب النص أو الصقه أو ارفع ملفاً (txt, srt, ass...) — اختر اللغتين وترجم فوراً، مجاناً بلا مفتاح API.
+    </p>
+  </header>
+
+  <div class="aitw-card">
+    <div class="aitw-lang-row">
+      <select id="aitwSrcLang" aria-label="زمانی سەرچاوە / لغة المصدر"></select>
+      <button class="aitw-swap-btn" id="aitwSwapBtn" title="گۆڕینەوەی زمانەکان / تبديل اللغتين" aria-label="swap">⇄</button>
+      <select id="aitwTgtLang" aria-label="زمانی ئامانج / اللغة الهدف"></select>
+    </div>
+
+    <div class="aitw-panes">
+      <div class="aitw-pane">
+        <label for="aitwSrcText">دەقی سەرەکی / النص الأصلي</label>
+        <textarea id="aitwSrcText" placeholder="لێرە بنووسە... / اكتب هنا... (یان فایلێک ڕابکێشە / أو اسحب ملفاً هنا)"></textarea>
+        <div class="aitw-meta-row">
+          <span id="aitwSrcCount">0 پیت</span>
+          <span class="aitw-btn-group">
+            <button id="aitwPasteBtn" type="button">لکاندن / لصق</button>
+            <button id="aitwFileBtn" type="button">فایل / ملف</button>
+            <button id="aitwClearBtn" type="button">پاککردنەوە / مسح</button>
+          </span>
+        </div>
+        <input type="file" id="aitwFileInput" accept=".txt,.md,.csv,.srt,.json,.log,.ass,.ssa,text/plain" hidden>
+        <div class="aitw-drop-hint" id="aitwDropHint">دەتوانیت فایلی txt, srt, ass, csv ڕابکێشیت و لێرە دایبنێیت / يمكنك سحب وإفلات ملف txt, srt, ass, csv هنا</div>
+      </div>
+      <div class="aitw-pane">
+        <label for="aitwOutText">وەرگێڕان / الترجمة</label>
+        <textarea id="aitwOutText" readonly placeholder="ئەنجامی وەرگێڕان لێرە دەردەکەوێت... / ستظهر الترجمة هنا..."></textarea>
+        <div class="aitw-meta-row">
+          <span id="aitwOutCount">0 پیت</span>
+          <span class="aitw-btn-group">
+            <button id="aitwCopyBtn" type="button">کۆپیکردن / نسخ</button>
+            <button id="aitwDownloadBtn" type="button">داگرتن / تنزيل</button>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="aitw-actions">
+      <button class="aitw-translate-btn" id="aitwTranslateBtn">وەرگێڕە / ترجم</button>
+      <span class="aitw-status" id="aitwStatusEl"></span>
+    </div>
+  </div>
+
+  <footer class="aitw-footer">
+    <strong>تێبینی:</strong> ئەم ئامرازە خزمەتگوزاری وەرگێڕانی گۆگڵی بەخۆڕایی بەکاردەهێنێت، پێویستی بە ئینتەرنێت هەیە بەڵام هیچ کلیل یان پارەدان ناوێت. فایلی <code>.ass/.srt</code> وەردەگیرێت و دەتوانیت وەرگێڕدراوەکەی وەک هەمان جۆری فایل داگریت.<br>
+    <strong>ملاحظة:</strong> يستخدم خدمة ترجمة جوجل المجانية (يحتاج إنترنت فقط، بلا مفتاح API). يدعم ملفات ترجمة الأفلام <code>.ass و .srt</code> ويمكن تنزيل النتيجة بنفس صيغة الملف الأصلي.
+  </footer>
+</div>
+
+<style>
+  .aitw-root{
+    --aitw-ink:#161B22;
+    --aitw-panel:#1E2632;
+    --aitw-panel-2:#242E3D;
+    --aitw-paper:#F4F1E9;
+    --aitw-gold:#D9A441;
+    --aitw-teal:#3C7A75;
+    --aitw-line:#33404F;
+    --aitw-muted:#9AA6B2;
+    --aitw-danger:#D9704F;
+    --aitw-radius:14px;
+
+    all:initial;
+    *, *::before, *::after{ box-sizing:border-box; }
+
+    display:block;
+    direction:rtl;
+    max-width:880px;
+    margin:24px auto;
+    padding:26px;
+    border-radius:22px;
+    background:
+      radial-gradient(700px 300px at 15% -10%, rgba(217,164,65,0.10), transparent 60%),
+      radial-gradient(600px 260px at 100% 110%, rgba(60,122,117,0.14), transparent 60%),
+      var(--aitw-ink);
+    color:var(--aitw-paper);
+    font-family:'Tajawal','Segoe UI',Tahoma,sans-serif;
+    box-shadow:0 20px 50px rgba(0,0,0,0.25);
+    line-height:1.6;
+  }
+  .aitw-root *{ font-family:inherit; box-sizing:border-box; }
+
+  @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Amiri:wght@400;700&display=swap');
+
+  .aitw-header{ margin-bottom:24px; }
+  .aitw-eyebrow{ display:flex; align-items:center; gap:10px; color:var(--aitw-gold); font-size:14px; margin-bottom:10px; }
+  .aitw-dash{ width:26px; height:2px; background:var(--aitw-gold); display:inline-block; }
+  .aitw-h1{ font-family:'Amiri', serif; font-size:32px; margin:0 0 8px; line-height:1.35; color:var(--aitw-paper); font-weight:700; }
+  .aitw-h1 span{ color:var(--aitw-teal); }
+  .aitw-sub{ color:var(--aitw-muted); font-size:14.5px; max-width:65ch; line-height:1.9; margin:0; }
+
+  .aitw-card{ background:var(--aitw-panel); border:1px solid var(--aitw-line); border-radius:var(--aitw-radius); padding:20px; }
+
+  .aitw-lang-row{ display:flex; align-items:center; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
+  .aitw-root select{
+    background:var(--aitw-panel-2); color:var(--aitw-paper); border:1px solid var(--aitw-line);
+    border-radius:10px; padding:10px 14px; font-size:14px; flex:1; min-width:150px; appearance:none; cursor:pointer;
+  }
+  .aitw-root select:focus{ outline:2px solid var(--aitw-gold); outline-offset:1px; }
+
+  .aitw-swap-btn{
+    background:transparent; border:1px solid var(--aitw-line); color:var(--aitw-gold);
+    width:38px; height:38px; border-radius:50%; font-size:17px; cursor:pointer; flex:none;
+    transition:transform .2s ease, border-color .2s ease;
+  }
+  .aitw-swap-btn:hover{ border-color:var(--aitw-gold); transform:rotate(180deg); }
+  .aitw-swap-btn:focus-visible{ outline:2px solid var(--aitw-gold); }
+
+  .aitw-panes{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:640px){ .aitw-panes{ grid-template-columns:1fr; } }
+
+  .aitw-pane label{ display:block; font-size:13px; color:var(--aitw-muted); margin-bottom:8px; }
+  .aitw-root textarea{
+    width:100%; min-height:170px; resize:vertical;
+    background:var(--aitw-panel-2); border:1px solid var(--aitw-line); border-radius:10px;
+    color:var(--aitw-paper); font-size:15.5px; line-height:1.8; padding:14px;
+    transition:border-color .15s ease;
+  }
+  .aitw-root textarea:focus{ outline:2px solid var(--aitw-gold); outline-offset:1px; }
+  .aitw-root textarea[readonly]{ background:#1A222D; }
+
+  .aitw-meta-row{ display:flex; justify-content:space-between; align-items:center; margin-top:6px; font-size:12px; color:var(--aitw-muted); flex-wrap:wrap; gap:6px; }
+  .aitw-btn-group{ display:flex; gap:4px; flex-wrap:wrap; }
+  .aitw-root button{
+    background:none; border:1px solid var(--aitw-line); color:var(--aitw-teal);
+    border-radius:6px; font-size:12px; cursor:pointer; padding:4px 10px;
+    transition:border-color .15s ease, color .15s ease;
+  }
+  .aitw-root button:hover{ color:var(--aitw-gold); border-color:var(--aitw-gold); }
+  .aitw-root button:disabled{ opacity:.4; cursor:default; }
+
+  .aitw-drop-hint{ font-size:11.5px; color:var(--aitw-muted); margin-top:6px; }
+
+  .aitw-actions{ display:flex; align-items:center; gap:14px; margin-top:18px; flex-wrap:wrap; }
+  .aitw-translate-btn{
+    background:var(--aitw-gold); color:#20180A; border:none; padding:12px 26px; border-radius:10px;
+    font-weight:700; font-size:15px; cursor:pointer; transition:background .2s ease;
+  }
+  .aitw-translate-btn:hover{ background:#e8b95c; }
+  .aitw-translate-btn:disabled{ opacity:.6; cursor:progress; }
+
+  .aitw-status{ font-size:13px; color:var(--aitw-muted); min-height:18px; }
+  .aitw-status.aitw-error{ color:var(--aitw-danger); }
+
+  .aitw-footer{ margin-top:20px; color:var(--aitw-muted); font-size:12px; line-height:2; border-top:1px solid var(--aitw-line); padding-top:14px; }
+  .aitw-footer strong{ color:var(--aitw-teal); }
+.aitw-footer code {
+    background: #fafbfb;
+    padding: 1px 6px;
+    border-radius: 4px;
+}</style>
+
+<script>
+(function(){
+  const LANGS = [
+    ["auto","ئاشکراکردنی خۆکار (Auto Detect)"],
+    ["ckb","کوردیی سۆرانی (Kurdish Sorani)"],
+    ["ku","کوردیی کورمانجی (Kurdish Kurmanji)"],
+    ["ar","العربية (Arabic)"],
+    ["en","English (الإنجليزية)"],
+    ["fr","Français (الفرنسية)"],
+    ["de","Deutsch (الألمانية)"],
+    ["es","Español (الإسبانية)"],
+    ["it","Italiano (الإيطالية)"],
+    ["tr","Türkçe (التركية)"],
+    ["fa","فارسی (الفارسية)"],
+    ["ur","اردو (الأردية)"],
+    ["ru","Русский (الروسية)"],
+    ["zh-CN","中文 (الصينية)"],
+    ["ja","日本語 (اليابانية)"],
+    ["ko","한국어 (الكورية)"],
+    ["hi","हिन्दी (الهندية)"],
+    ["pt","Português (البرتغالية)"],
+    ["nl","Nederlands (الهولندية)"],
+    ["sv","Svenska (السويدية)"],
+    ["he","עברית (العبرية)"],
+    ["id","Bahasa Indonesia (الإندونيسية)"],
+    ["sw","Kiswahili (السواحلية)"]
+  ];
+
+  const root = document.getElementById('aitwRoot');
+  const $ = (id) => root.querySelector('#' + id);
+
+  const srcSelect = $('aitwSrcLang');
+  const tgtSelect = $('aitwTgtLang');
+  const srcText = $('aitwSrcText');
+  const outText = $('aitwOutText');
+  const statusEl = $('aitwStatusEl');
+  const srcCount = $('aitwSrcCount');
+  const outCount = $('aitwOutCount');
+  const translateBtn = $('aitwTranslateBtn');
+  const pasteBtn = $('aitwPasteBtn');
+  const fileBtn = $('aitwFileBtn');
+  const fileInput = $('aitwFileInput');
+  const downloadBtn = $('aitwDownloadBtn');
+
+  LANGS.forEach(([code, label]) => {
+    const opt1 = document.createElement('option');
+    opt1.value = code; opt1.textContent = label;
+    srcSelect.appendChild(opt1);
+    if(code !== 'auto'){
+      const opt2 = document.createElement('option');
+      opt2.value = code; opt2.textContent = label;
+      tgtSelect.appendChild(opt2);
+    }
+  });
+  srcSelect.value = 'auto';
+  tgtSelect.value = 'ckb';
+
+  // حالة الملفات المهيكلة (SRT / ASS) لإعادة البناء بعد الترجمة
+  // structuredData = { type:'srt'|'ass', lines:[...], entries:[{lineIndex, prefix?}], fileName }
+  let structuredData = null;
+
+  function showStatus(msg, isError=false, timeout=2200){
+    statusEl.classList.toggle('aitw-error', isError);
+    statusEl.textContent = msg;
+    if(timeout) setTimeout(() => { statusEl.textContent=''; statusEl.classList.remove('aitw-error'); }, timeout);
+  }
+
+  function updateSrcCount(){ srcCount.textContent = srcText.value.length + ' پیت / حرف'; }
+  function updateOutCount(){ outCount.textContent = outText.value.length + ' پیت / حرف'; }
+
+  srcText.addEventListener('input', () => { updateSrcCount(); structuredData = null; });
+
+  $('aitwClearBtn').addEventListener('click', () => {
+    srcText.value = ''; outText.value = '';
+    updateSrcCount(); updateOutCount();
+    statusEl.textContent = '';
+    structuredData = null;
+  });
+
+  $('aitwCopyBtn').addEventListener('click', async () => {
+    if(!outText.value) return;
+    try{
+      await navigator.clipboard.writeText(outText.value);
+      showStatus('کۆپی کرا! / تم النسخ!');
+    }catch(e){
+      outText.select();
+      document.execCommand('copy');
+    }
+  });
+
+  $('aitwSwapBtn').addEventListener('click', () => {
+    if(srcSelect.value === 'auto'){
+      showStatus('ناتوانرێت زمانی خۆکار بگۆڕدرێت / لا يمكن التبديل مع الاكتشاف التلقائي', true);
+      return;
+    }
+    const s = srcSelect.value, t = tgtSelect.value;
+    srcSelect.value = t; tgtSelect.value = s;
+    const tmp = srcText.value;
+    srcText.value = outText.value;
+    outText.value = tmp;
+    updateSrcCount(); updateOutCount();
+    structuredData = null;
+  });
+
+  // ---------- قراءة الملفات ----------
+  function readFileAsText(file){
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(reader.error);
+      reader.readAsText(file, 'UTF-8');
+    });
+  }
+
+  function nthIndexOf(str, ch, n){
+    let count = 0;
+    for(let i=0;i<str.length;i++){
+      if(str[i] === ch){ count++; if(count === n) return i; }
+    }
+    return -1;
+  }
+
+  // تحليل ملف .ass / .ssa: استخراج نص كل سطر Dialogue فقط
+  function parseAss(content, fileName){
+    const lines = content.split(/\r\n|\r|\n/);
+    const entries = [];
+    const texts = [];
+    lines.forEach((line, i) => {
+      if(/^Dialogue:\s*/i.test(line)){
+        const rest = line.replace(/^Dialogue:\s*/i, '');
+        const idx = nthIndexOf(rest, ',', 9); // 9 حقول قبل النص في تنسيق ASS/SSA
+        if(idx !== -1){
+          const prefix = rest.slice(0, idx);
+          let text = rest.slice(idx + 1);
+          entries.push({ lineIndex: i, prefix });
+          text = text.replace(/\\N/gi, ' / ').replace(/{[^}]*}/g, '').trim();
+          texts.push(text);
+        }
+      }
+    });
+    return { type:'ass', lines, entries, texts, fileName };
+  }
+
+  // تحليل ملف .srt: استخراج نص كل كتلة ترجمة
+  function parseSrt(content, fileName){
+    const blocks = content.split(/\r?\n\r?\n/).filter(b => b.trim().length);
+    const entries = [];
+    const texts = [];
+    blocks.forEach((block, i) => {
+      const blockLines = block.split(/\r?\n/);
+      // أول سطر رقم، ثاني سطر توقيت، الباقي نص
+      if(blockLines.length >= 3 && /-->/.test(blockLines[1])){
+        const textLines = blockLines.slice(2).join(' / ');
+        entries.push({ blockIndex: i, number: blockLines[0], time: blockLines[1] });
+        texts.push(textLines.trim());
+      }
+    });
+    return { type:'srt', blocks, entries, texts, fileName };
+  }
+
+  async function loadFile(file){
+    if(!file) return;
+    const MAX_SIZE = 3 * 1024 * 1024;
+    if(file.size > MAX_SIZE){
+      showStatus('فایلەکە زۆر گەورەیە (زۆرترین 3MB) / الملف كبير جداً (الحد 3MB)', true, 3000);
+      return;
+    }
+    const name = file.name.toLowerCase();
+    try{
+      const content = await readFileAsText(file);
+      if(name.endsWith('.ass') || name.endsWith('.ssa')){
+        structuredData = parseAss(content, file.name);
+        srcText.value = structuredData.texts.join('\n');
+        showStatus('فایلی ASS بارکرا! (' + structuredData.texts.length + ' دەق) / تم تحميل ملف ASS!');
+      } else if(name.endsWith('.srt')){
+        structuredData = parseSrt(content, file.name);
+        srcText.value = structuredData.texts.join('\n');
+        showStatus('فایلی SRT بارکرا! (' + structuredData.texts.length + ' دەق) / تم تحميل ملف SRT!');
+      } else {
+        structuredData = null;
+        srcText.value = content;
+        showStatus('فایل بارکرا! / تم تحميل الملف!');
+      }
+      updateSrcCount();
+    }catch(err){
+      showStatus('نەتوانرا فایلەکە بخوێنرێتەوە / تعذّرت قراءة الملف', true, 3000);
+    }
+  }
+
+  pasteBtn.addEventListener('click', async () => {
+    try{
+      const text = await navigator.clipboard.readText();
+      if(!text){ showStatus('کلیپبۆرد بەتاڵە / الحافظة فارغة', true); return; }
+      srcText.value = text;
+      updateSrcCount();
+      structuredData = null;
+      showStatus('لکێنرا! / تم اللصق!');
+    }catch(err){
+      showStatus('ڕێگەت نەدرا بە لکاندن، Ctrl+V بەکاربهێنە / لم يُسمح باللصق، استخدم Ctrl+V', true, 3000);
+    }
+  });
+
+  fileBtn.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', (e) => { loadFile(e.target.files[0]); fileInput.value=''; });
+
+  ['dragover','dragenter'].forEach(evt => {
+    srcText.addEventListener(evt, (e) => { e.preventDefault(); srcText.style.borderColor = 'var(--aitw-gold)'; });
+  });
+  ['dragleave','drop'].forEach(evt => {
+    srcText.addEventListener(evt, (e) => { e.preventDefault(); srcText.style.borderColor = 'var(--aitw-line)'; });
+  });
+  srcText.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files && e.dataTransfer.files[0];
+    if(file) loadFile(file);
+  });
+
+  // ---------- الترجمة ----------
+  async function translateOne(text, sl, tl){
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&q=${encodeURIComponent(text)}`;
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('network');
+    const data = await res.json();
+    return data[0].map(chunk => chunk[0]).join('');
+  }
+
+  async function translateText(){
+    const raw = srcText.value;
+    if(!raw.trim()){
+      showStatus('تکایە دەقێک بنووسە / الرجاء إدخال نص', true);
+      return;
+    }
+    const sl = srcSelect.value, tl = tgtSelect.value;
+    translateBtn.disabled = true;
+    outText.value = '';
+
+    const currentLines = raw.split('\n');
+    const isStructuredMatch = structuredData && currentLines.length === structuredData.texts.length;
+
+    try{
+      if(isStructuredMatch){
+        // ترجمة سطراً بسطر للحفاظ على التوقيت والبنية عند إعادة البناء
+        const translatedLines = [];
+        for(let i=0; i<currentLines.length; i++){
+          showStatus(`وەرگێڕان... ${i+1}/${currentLines.length}`, false, 0);
+          const line = currentLines[i];
+          translatedLines.push(line.trim() ? await translateOne(line, sl, tl) : '');
+        }
+        outText.value = translatedLines.join('\n');
+        structuredData.translatedLines = translatedLines;
+        showStatus('تەواو بوو! / تمت الترجمة!');
+      } else {
+        const translated = await translateOne(raw, sl, tl);
+        outText.value = translated;
+        showStatus('تەواو بوو! / تمت الترجمة!');
+      }
+      updateOutCount();
+    }catch(err){
+      showStatus('هەڵەیەک ڕوویدا، دووبارە هەوڵبدەرەوە / حدث خطأ، حاول مرة أخرى', true, 3000);
+    }finally{
+      translateBtn.disabled = false;
+    }
+  }
+
+  translateBtn.addEventListener('click', translateText);
+  srcText.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter' && (e.ctrlKey || e.metaKey)){ e.preventDefault(); translateText(); }
+  });
+
+  // ---------- التنزيل ----------
+  function download(filename, content){
+    const blob = new Blob([content], {type:'text/plain;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  downloadBtn.addEventListener('click', () => {
+    if(!outText.value){ showStatus('هیچ وەرگێڕانێک نییە / لا توجد ترجمة بعد', true); return; }
+
+    const currentLines = srcText.value.split('\n');
+    const isStructuredMatch = structuredData && structuredData.translatedLines
+      && currentLines.length === structuredData.texts.length;
+
+    if(isStructuredMatch && structuredData.type === 'ass'){
+      const lines = structuredData.lines.slice();
+      structuredData.entries.forEach((entry, i) => {
+        lines[entry.lineIndex] = 'Dialogue: ' + entry.prefix + ',' + (structuredData.translatedLines[i] || '');
+      });
+      download((structuredData.fileName || 'translated').replace(/\.[^.]+$/, '') + '_translated.ass', lines.join('\n'));
+      return;
+    }
+
+    if(isStructuredMatch && structuredData.type === 'srt'){
+      const rebuilt = structuredData.entries.map((entry, i) =>
+        `${entry.number}\n${entry.time}\n${(structuredData.translatedLines[i] || '').split(' / ').join('\n')}`
+      ).join('\n\n');
+      download((structuredData.fileName || 'translated').replace(/\.[^.]+$/, '') + '_translated.srt', rebuilt);
+      return;
+    }
+
+    download('translated.txt', outText.value);
+  });
+
+})();
+</script>

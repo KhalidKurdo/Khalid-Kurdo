@@ -1,0 +1,620 @@
+<!-- ============================================================
+     ویجێتی هاوبەشکردنی شوێنی جوگرافی — بۆ بەکارهێنان لە Blogger
+     هەموو ستایل و کۆدەکان لەناو lsw-* دانراون بۆ ئەوەی
+     هیچ کێشەیەک لەگەڵ ڕووکاری بلۆگەکەت دروست نەکات
+     ============================================================ -->
+<div id="lsw-root" dir="rtl" lang="ckb">
+  <style>
+    #lsw-root, #lsw-root * { box-sizing: border-box; }
+    #lsw-root {
+      --lsw-ink: #17302b;
+      --lsw-paper: #f4f1ea;
+      --lsw-paper2: #eae5d8;
+      --lsw-teal: #1f6f5c;
+      --lsw-teal-deep: #123f34;
+      --lsw-amber: #c8792a;
+      --lsw-line: #cfc7b0;
+      --lsw-ok: #2f7d5a;
+      --lsw-warn: #b3462c;
+      font-family: -apple-system, "Segoe UI", Tahoma, Arial, sans-serif;
+      width: 100%;
+      max-width: 480px;
+      margin: 24px auto;
+      background: var(--lsw-paper);
+      border: 1px solid var(--lsw-line);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(23,48,43,.06), 0 12px 28px rgba(23,48,43,.10);
+      color: var(--lsw-ink);
+      font-size: clamp(13px, 3vw, 15px);
+    }
+    /* هەموو ئەندازەکان لەسەر بنەمای فۆنتی سەرەکی دەگۆڕدرێن، بۆیە
+       لەگەڵ ئامێری جیاواز خۆیان ڕێک دەخەن بێ نیاز بە بریکپۆینتی زۆر */
+    #lsw-root button, #lsw-root input { font-size: inherit; }
+
+    #lsw-root .lsw-head {
+      position: relative;
+      background:
+        radial-gradient(120% 160% at 100% 0%, rgba(200,121,42,.20), transparent 55%),
+        linear-gradient(160deg, var(--lsw-teal-deep), var(--lsw-teal) 70%);
+      color: #f4f1ea;
+      padding: clamp(16px, 5vw, 22px) clamp(16px, 5vw, 22px) 44px;
+      overflow: hidden;
+    }
+    #lsw-root .lsw-head::before {
+      content: "";
+      position: absolute; inset: -20% -10%;
+      background:
+        repeating-radial-gradient(circle at 78% 30%, rgba(244,241,234,.10) 0 1px, transparent 1px 14px),
+        repeating-radial-gradient(circle at 78% 30%, rgba(244,241,234,.06) 0 1px, transparent 1px 28px);
+      opacity: .6;
+      pointer-events: none;
+    }
+    #lsw-root .lsw-eyebrow {
+      position: relative;
+      font-size: .78em;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: #d7cfa8;
+      margin: 0 0 6px;
+      font-weight: 600;
+    }
+    #lsw-root .lsw-title {
+      position: relative;
+      font-size: clamp(1.05em, 4.6vw, 1.5em);
+      font-weight: 700;
+      margin: 0;
+      line-height: 1.5;
+      color: #ff3b30;
+    }
+
+    #lsw-root .lsw-coordcard {
+      position: relative;
+      margin: -28px clamp(10px, 3.5vw, 18px) 0;
+      background: #fff;
+      border: 1px solid var(--lsw-line);
+      border-radius: 14px;
+      padding: 12px clamp(10px, 3vw, 16px);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px 10px;
+      box-shadow: 0 8px 20px rgba(23,48,43,.12);
+    }
+    #lsw-root .lsw-coordcard .lsw-pin {
+      width: 32px; height: 32px; flex: 0 0 auto;
+      border-radius: 50%;
+      background: var(--lsw-paper2);
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    #lsw-root .lsw-pin svg { width: 17px; height: 17px; color: var(--lsw-teal); }
+    #lsw-root .lsw-pin.lsw-pulsing::after {
+      content: "";
+      position: absolute; inset: -6px;
+      border-radius: 50%;
+      border: 2px solid var(--lsw-teal);
+      animation: lsw-pulse 1.4s ease-out infinite;
+    }
+    @keyframes lsw-pulse {
+      0% { transform: scale(.6); opacity: .8; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+    #lsw-root .lsw-coords {
+      flex: 1 1 120px;
+      font-family: "SFMono-Regular", Consolas, "Courier New", monospace;
+      font-size: .92em;
+      letter-spacing: .01em;
+      direction: ltr;
+      text-align: right;
+      color: var(--lsw-ink);
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+    #lsw-root .lsw-coords .lsw-label {
+      font-family: -apple-system, "Segoe UI", Tahoma, Arial, sans-serif;
+      font-size: .78em;
+      color: #8a8570;
+      direction: rtl;
+      margin-bottom: 2px;
+    }
+    #lsw-root .lsw-status {
+      font-size: .78em;
+      font-weight: 700;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: #eaf5ef;
+      color: var(--lsw-ok);
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+    #lsw-root .lsw-status.lsw-idle { background: var(--lsw-paper2); color: #8a8570; }
+    #lsw-root .lsw-status.lsw-err { background: #fbeae6; color: var(--lsw-warn); }
+
+    #lsw-root .lsw-body { padding: 16px clamp(14px, 4.5vw, 22px) 20px; }
+
+    /* بانەری ڕێگەپێدانی شوێن */
+    #lsw-root .lsw-permnote {
+      display: none;
+      background: #fbeae6;
+      border: 1px solid #f0c8bb;
+      color: var(--lsw-warn);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: .85em;
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+    #lsw-root .lsw-permnote.lsw-show { display: block; }
+    #lsw-root .lsw-permnote strong { display: block; margin-bottom: 4px; font-size: 1.03em; }
+    #lsw-root .lsw-permnote ol { margin: 6px 0 0; padding-inline-start: 18px; }
+    #lsw-root .lsw-permnote button {
+      margin-top: 8px;
+      background: none;
+      border: none;
+      color: var(--lsw-warn);
+      text-decoration: underline;
+      font-size: .95em;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 6px 0;
+      min-height: 30px;
+    }
+
+    #lsw-root .lsw-locatebtn {
+      width: 100%;
+      display: flex; align-items: center; justify-content: center; gap: 9px;
+      background: var(--lsw-ink);
+      color: #f4f1ea;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 16px;
+      min-height: 48px;
+      font-size: .97em;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .12s ease, background .2s ease;
+    }
+    #lsw-root .lsw-locatebtn:hover { background: var(--lsw-teal-deep); }
+    #lsw-root .lsw-locatebtn:active { transform: scale(.98); }
+    #lsw-root .lsw-locatebtn:disabled { opacity: .6; cursor: progress; }
+    #lsw-root .lsw-locatebtn svg { width: 17px; height: 17px; flex: 0 0 auto; }
+
+    #lsw-root .lsw-divider {
+      display: flex; align-items: center; gap: 10px;
+      margin: 16px 0;
+      color: #a49f88; font-size: .78em;
+      text-align: center;
+    }
+    #lsw-root .lsw-divider::before, #lsw-root .lsw-divider::after {
+      content: ""; flex: 1; height: 1px; background: var(--lsw-line);
+    }
+
+    #lsw-root .lsw-manual {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;
+    }
+    #lsw-root .lsw-field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+    #lsw-root .lsw-field label { font-size: .78em; color: #6d6852; font-weight: 600; }
+    #lsw-root .lsw-field input {
+      width: 100%;
+      font-family: "SFMono-Regular", Consolas, "Courier New", monospace;
+      direction: ltr; text-align: left;
+      border: 1px solid var(--lsw-line);
+      border-radius: 9px;
+      padding: 10px 10px;
+      min-height: 42px;
+      font-size: .9em;
+      background: #fff;
+      color: var(--lsw-ink);
+    }
+    #lsw-root .lsw-field input:focus {
+      outline: 2px solid var(--lsw-teal);
+      outline-offset: 1px;
+      border-color: var(--lsw-teal);
+    }
+
+    #lsw-root .lsw-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    #lsw-root .lsw-actionbtn {
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      border: 1px solid var(--lsw-line);
+      background: #fff;
+      color: var(--lsw-ink);
+      border-radius: 11px;
+      padding: 11px 8px;
+      min-height: 44px;
+      font-size: .87em;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: border-color .15s ease, color .15s ease, background .15s ease;
+    }
+    #lsw-root .lsw-actionbtn svg { width: 15px; height: 15px; flex: 0 0 auto; }
+    #lsw-root .lsw-actionbtn:hover { border-color: var(--lsw-teal); color: var(--lsw-teal); }
+    #lsw-root .lsw-actionbtn.lsw-done { border-color: var(--lsw-ok); color: var(--lsw-ok); background: #eaf5ef; }
+    #lsw-root .lsw-actionbtn:disabled { opacity: .5; cursor: not-allowed; }
+
+    #lsw-root .lsw-sharebtn {
+      grid-column: 1 / -1;
+      margin-top: 10px;
+      background: var(--lsw-amber);
+      border-color: var(--lsw-amber);
+      color: #fff;
+    }
+    #lsw-root .lsw-sharebtn:hover { background: #ad6620; color: #fff; }
+
+    #lsw-root .lsw-footnote {
+      margin: 14px 2px 0;
+      font-size: .76em;
+      color: #948f78;
+      line-height: 1.7;
+    }
+
+    /* شاشەی زۆر بچووک (مۆبایلی نزم) */
+    @media (max-width: 360px) {
+      #lsw-root { margin: 12px auto; border-radius: 14px; }
+      #lsw-root .lsw-manual { grid-template-columns: 1fr; }
+      #lsw-root .lsw-actions { grid-template-columns: 1fr; }
+      #lsw-root .lsw-coordcard { margin-inline: 10px; }
+    }
+
+    /* تابلێت و ئامێری ناوەند */
+    @media (min-width: 600px) {
+      #lsw-root { max-width: 560px; }
+      #lsw-root .lsw-actions { gap: 12px; }
+    }
+
+    /* شاشەی گەورە / دیسکتۆپ */
+    @media (min-width: 900px) {
+      #lsw-root { max-width: 620px; }
+    }
+
+    /* دۆخی ئاسۆیی لەسەر مۆبایل — رێگری لە زۆر بەرزی کارت */
+    @media (max-height: 480px) and (orientation: landscape) {
+      #lsw-root { margin: 12px auto; }
+      #lsw-root .lsw-head { padding-bottom: 34px; }
+      #lsw-root .lsw-coordcard { margin-top: -22px; }
+    }
+
+    /* ڕێزگرتن لە بەکارهێنەرانی کە جوڵە کەم دەکەنەوە */
+    @media (prefers-reduced-motion: reduce) {
+      #lsw-root .lsw-pin.lsw-pulsing::after { animation: none; }
+      #lsw-root .lsw-locatebtn, #lsw-root .lsw-actionbtn { transition: none; }
+    }
+  </style>
+
+  <div class="lsw-head">
+    <p class="lsw-eyebrow">هاوبەشکردنی شوێن</p>
+    <h3 class="lsw-title">شوێنی خۆت دیاری بکە و لە چرکەیەکدا هاوبەشی پێ بکە</h3>
+  </div>
+
+  <div class="lsw-coordcard">
+    <div class="lsw-pin" id="lsw-pinIcon">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 1 1 18 0Z" />
+        <circle cx="12" cy="10" r="3" />
+      </svg>
+    </div>
+    <div class="lsw-coords" id="lsw-coordsText">
+      <div class="lsw-label">پانی / درێژی جوگرافی</div>
+      <div>— , —</div>
+    </div>
+    <span class="lsw-status lsw-idle" id="lsw-statusTag"
+      >شوێن دیارینەکراوە</span
+    >
+  </div>
+
+  <div class="lsw-body">
+    <div class="lsw-permnote" id="lsw-permNote">
+      <strong>⚠ ڕێگەپێدانی شوێن ڕەتکراوەتەوە</strong>
+      <span
+        >وێبگەڕەکەت ڕێگە بە ئەم لاپەڕەیە نادات کە شوێنت بزانێت. بۆ چالاککردنی
+        دووبارە:</span
+      >
+      <ol>
+        <li>
+          سەردێڕی وێبگەڕەکەت لای چەپی لینک کلیک بکە (دووگمەی
+          قوفڵ/ئاگادارکردنەوە)
+        </li>
+        <li>بەشی «شوێن / Location» بدۆزەرەوە و بیکە بە «ڕێگەپێدراو»</li>
+        <li>لاپەڕەکە نوێ بکەرەوە و دووبارە هەوڵ بدەرەوە</li>
+      </ol>
+      <button type="button" id="lsw-dismissPermNote">
+        داخستنی ئەم ئاگادارکردنەوەیە
+      </button>
+    </div>
+
+    <button type="button" class="lsw-locatebtn" id="lsw-locateBtn">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="12" cy="12" r="3" />
+        <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
+      </svg>
+      <span>دیاریکردنی شوێنی ئێستام</span>
+    </button>
+
+    <div class="lsw-divider">یان کۆردیناتەکان بە دەستی بنووسە</div>
+
+    <div class="lsw-manual">
+      <div class="lsw-field">
+        <label for="lsw-latInput">پانی (Lat)</label>
+        <input
+          type="text"
+          id="lsw-latInput"
+          inputmode="decimal"
+          placeholder="36.1911"
+        />
+      </div>
+      <div class="lsw-field">
+        <label for="lsw-lngInput">درێژی (Lng)</label>
+        <input
+          type="text"
+          id="lsw-lngInput"
+          inputmode="decimal"
+          placeholder="44.0092"
+        />
+      </div>
+    </div>
+
+    <div class="lsw-actions">
+      <button type="button" class="lsw-actionbtn" id="lsw-copyLinkBtn">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path
+            d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11.5 4.5"
+          />
+          <path
+            d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07l1.36-1.36"
+          />
+        </svg>
+        کۆپیکردنی لینک
+      </button>
+      <button type="button" class="lsw-actionbtn" id="lsw-copyCoordsBtn">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <rect x="9" y="9" width="11" height="11" rx="2" />
+          <path d="M5 15V5a2 2 0 0 1 2-2h10" />
+        </svg>
+        کۆپیکردنی کۆردیناتەکان
+      </button>
+      <button
+        type="button"
+        class="lsw-actionbtn lsw-sharebtn"
+        id="lsw-shareBtn"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="18" cy="5" r="3" />
+          <circle cx="6" cy="12" r="3" />
+          <circle cx="18" cy="19" r="3" />
+          <path d="M8.6 13.5 15.4 17.5M15.4 6.5 8.6 10.5" />
+        </svg>
+        هاوبەشکردن لە ڕێگەی ئەپەکانەوە
+      </button>
+    </div>
+
+    <p class="lsw-footnote">
+      دیاریکردنی شوێن ڕاستەوخۆ لە ڕێگەی وێبگەڕەکەتەوە کار دەکات، هیچ شتێک لەسەر
+      هیچ ڕاژەیەک هەڵناگیرێت. لینکی دروستکراو شوێنەکە لە گووگڵ ماپس دەکاتەوە.
+    </p>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var root = document.getElementById('lsw-root');
+    if (!root) return;
+
+    var pinIcon        = root.querySelector('#lsw-pinIcon');
+    var coordsText      = root.querySelector('#lsw-coordsText');
+    var statusTag         = root.querySelector('#lsw-statusTag');
+    var permNote            = root.querySelector('#lsw-permNote');
+    var dismissPermBtn         = root.querySelector('#lsw-dismissPermNote');
+    var locateBtn                = root.querySelector('#lsw-locateBtn');
+    var latInput                    = root.querySelector('#lsw-latInput');
+    var lngInput                       = root.querySelector('#lsw-lngInput');
+    var copyLinkBtn                       = root.querySelector('#lsw-copyLinkBtn');
+    var copyCoordsBtn                        = root.querySelector('#lsw-copyCoordsBtn');
+    var shareBtn                                = root.querySelector('#lsw-shareBtn');
+
+    var state = { lat: null, lng: null };
+    var locateBtnDefaultHtml = locateBtn.innerHTML;
+
+    function fmt(n) { return Math.round(n * 1e6) / 1e6; }
+
+    function setStatus(text, kind) {
+      statusTag.textContent = text;
+      statusTag.className = 'lsw-status' + (kind ? ' lsw-' + kind : '');
+    }
+
+    function showPermNote() { permNote.classList.add('lsw-show'); }
+    function hidePermNote()  { permNote.classList.remove('lsw-show'); }
+
+    dismissPermBtn.addEventListener('click', hidePermNote);
+
+    function updateCoordsDisplay() {
+      if (state.lat === null || state.lng === null) {
+        coordsText.innerHTML = '<div class="lsw-label">پانی / درێژی جوگرافی</div><div>— , —</div>';
+        pinIcon.classList.remove('lsw-pulsing');
+        return;
+      }
+      coordsText.innerHTML = '<div class="lsw-label">پانی / درێژی جوگرافی</div><div>' +
+        fmt(state.lat) + ', ' + fmt(state.lng) + '</div>';
+      pinIcon.classList.add('lsw-pulsing');
+    }
+
+    function setFromCoords(lat, lng, source) {
+      state.lat = lat;
+      state.lng = lng;
+      latInput.value = fmt(lat);
+      lngInput.value = fmt(lng);
+      updateCoordsDisplay();
+      setStatus(source === 'gps' ? 'شوێنی GPS' : 'کۆردیناتی دەستی', 'ok');
+      resetActionButtons();
+    }
+
+    function resetActionButtons() {
+      [copyLinkBtn, copyCoordsBtn].forEach(function (btn) {
+        btn.classList.remove('lsw-done');
+      });
+    }
+
+    function currentLink() {
+      if (state.lat === null || state.lng === null) return null;
+      return 'https://www.google.com/maps?q=' + fmt(state.lat) + ',' + fmt(state.lng);
+    }
+
+    function flashDone(btn, label) {
+      var original = btn.innerHTML;
+      btn.classList.add('lsw-done');
+      btn.innerHTML = '✓ ' + label;
+      setTimeout(function () {
+        btn.innerHTML = original;
+      }, 1600);
+    }
+
+    function copyText(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(text);
+      }
+      return new Promise(function (resolve, reject) {
+        try {
+          var ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          resolve();
+        } catch (e) { reject(e); }
+      });
+    }
+
+    // ---- بەڕێوەبردنی ڕێگەپێدانی شوێن (Permissions API) ----
+    function applyPermissionState(permState) {
+      if (permState === 'denied') {
+        setStatus('ڕێگە ڕەتکراوەتەوە', 'err');
+        showPermNote();
+      } else if (permState === 'granted') {
+        hidePermNote();
+        setStatus('ڕێگە دراوە', 'ok');
+      } else {
+        hidePermNote();
+        setStatus('شوێن دیارینەکراوە', 'idle');
+      }
+    }
+
+    function watchPermission() {
+      if (!(navigator.permissions && navigator.permissions.query)) return;
+      navigator.permissions.query({ name: 'geolocation' }).then(function (status) {
+        applyPermissionState(status.state);
+        status.onchange = function () {
+          applyPermissionState(status.state);
+        };
+      }).catch(function () { /* API نییە یان پشتگیری نەکراوە، پشتگوێی بخە */ });
+    }
+
+    locateBtn.addEventListener('click', function () {
+      if (!navigator.geolocation) {
+        setStatus('پشتگیری نەکراوە', 'err');
+        return;
+      }
+      hidePermNote();
+      locateBtn.disabled = true;
+      locateBtn.innerHTML = '<span>لە دیاریکردندایە…</span>';
+      setStatus('لە دیاریکردندایە…', 'idle');
+
+      navigator.geolocation.getCurrentPosition(
+        function (pos) {
+          setFromCoords(pos.coords.latitude, pos.coords.longitude, 'gps');
+          locateBtn.disabled = false;
+          locateBtn.innerHTML = locateBtnDefaultHtml;
+        },
+        function (err) {
+          locateBtn.disabled = false;
+          locateBtn.innerHTML = locateBtnDefaultHtml;
+          if (err.code === err.PERMISSION_DENIED) {
+            setStatus('ڕێگە ڕەتکراوەتەوە', 'err');
+            showPermNote();
+          } else if (err.code === err.POSITION_UNAVAILABLE) {
+            setStatus('شوێن نەدۆزرایەوە', 'err');
+          } else if (err.code === err.TIMEOUT) {
+            setStatus('کاتی تەواو بوو', 'err');
+          } else {
+            setStatus('هەڵەیەک ڕوویدا', 'err');
+          }
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    });
+
+    [latInput, lngInput].forEach(function (inp) {
+      inp.addEventListener('input', function () {
+        var lat = parseFloat(latInput.value);
+        var lng = parseFloat(lngInput.value);
+        if (!isNaN(lat) && !isNaN(lng)) {
+          setFromCoords(lat, lng, 'manual');
+        }
+      });
+    });
+
+    copyLinkBtn.addEventListener('click', function () {
+      var link = currentLink();
+      if (!link) { setStatus('سەرەتا کۆردیناتەکان بنووسە', 'err'); return; }
+      copyText(link).then(function () { flashDone(copyLinkBtn, 'کۆپی کرا'); });
+    });
+
+    copyCoordsBtn.addEventListener('click', function () {
+      if (state.lat === null) { setStatus('سەرەتا کۆردیناتەکان بنووسە', 'err'); return; }
+      copyText(fmt(state.lat) + ', ' + fmt(state.lng)).then(function () {
+        flashDone(copyCoordsBtn, 'کۆپی کرا');
+      });
+    });
+
+    shareBtn.addEventListener('click', function () {
+      var link = currentLink();
+      if (!link) { setStatus('سەرەتا کۆردیناتەکان بنووسە', 'err'); return; }
+      if (navigator.share) {
+        navigator.share({ title: 'شوێنی جوگرافیم', text: 'ئەمە شوێنی ئێستامە:', url: link }).catch(function(){});
+      } else {
+        copyText(link).then(function () { flashDone(shareBtn, 'لینکی هاوبەشکردن کۆپی کرا'); });
+      }
+    });
+
+    updateCoordsDisplay();
+    watchPermission();
+  })();
+</script>

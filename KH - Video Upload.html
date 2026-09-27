@@ -1,0 +1,445 @@
+<!--
+  ویجێتی بارکردنی ڤیدیۆ بۆ GoFile - سەلامەت بۆ دانان لەناو بلۆگەر
+  ڕێگای بەکارهێنان لە بلۆگەر:
+  1) لە پانێڵی بلۆگەر: Layout > Add a Gadget > HTML/JavaScript
+  2) هەموو ئەم کۆدە بلکێنە ناو گادجێتەکە و پاشەکەوتی بکە
+  هەموو ستایل و ناسنامەکان تەنها سنووردارن بەم دیڤە، بۆیە کێشەیان لەگەڵ ڕووکاری بلۆگ نابێت.
+-->
+<div class="gfu-scope">
+  <div class="gfu-card" id="gfu-card-1">
+    <div class="gfu-head">
+      <span class="gfu-badge">GoFile</span>
+      <h3 class="gfu-title">بارکردنی ڤیدیۆ</h3>
+      <p class="gfu-subtitle">فایلێکی ڤیدیۆ لە ئامێرەکەت هەڵبژێرە، بە یەکسەر بار دەکرێت و دەستبەجێ لینکی داگرتنی بۆ وەردەگریت</p>
+    </div>
+
+    <label class="gfu-drop" for="gfu-file-1" id="gfu-drop-1">
+      <input type="file" id="gfu-file-1" class="gfu-file-input" accept="video/*">
+      <svg class="gfu-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 16V4M12 4L7 9M12 4L17 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="gfu-drop-text" id="gfu-drop-text-1">لێرە کلیک بکە بۆ هەڵبژاردنی ڤیدیۆ</span>
+      <span class="gfu-drop-hint">یان فایلی ڤیدیۆکە ڕابکێشە و لەم بۆشاییە دایبنێ</span>
+    </label>
+
+    <button type="button" class="gfu-btn" id="gfu-btn-1">
+      <span class="gfu-btn-label">دەستپێکردنی بارکردن</span>
+    </button>
+
+    <div class="gfu-progress-wrap" id="gfu-progress-wrap-1">
+      <div class="gfu-progress-track">
+        <div class="gfu-progress-fill" id="gfu-progress-fill-1"></div>
+      </div>
+      <div class="gfu-progress-meta">
+        <span id="gfu-progress-percent-1">0%</span>
+        <span id="gfu-progress-status-1">ئامادەکاری دەکرێت…</span>
+      </div>
+    </div>
+
+    <div class="gfu-result" id="gfu-result-1"></div>
+  </div>
+</div>
+
+<style>
+  /* كل الأنماط مقيدة داخل .gfu-scope لحماية بقية عناصر المدونة */
+  .gfu-scope {
+    all: initial;
+    display: block;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    direction: rtl;
+    box-sizing: border-box;
+  }
+  .gfu-scope, .gfu-scope * {
+    box-sizing: border-box;
+  }
+  .gfu-scope .gfu-card {
+    max-width: 460px;
+    margin: 24px auto;
+    background: #ffffff;
+    border: 1px solid #e6e8f0;
+    border-radius: 18px;
+    padding: 28px 26px 24px;
+    box-shadow: 0 1px 2px rgba(16,24,40,0.04), 0 12px 32px -12px rgba(16,24,40,0.12);
+  }
+  .gfu-scope .gfu-head {
+    text-align: center;
+    margin-bottom: 18px;
+  }
+  .gfu-scope .gfu-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: #4338ca;
+    background: #eef0ff;
+    padding: 4px 10px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+  }
+  .gfu-scope .gfu-title {
+    font-size: 19px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 6px;
+  }
+  .gfu-scope .gfu-subtitle {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.6;
+  }
+  .gfu-scope .gfu-drop {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 26px 16px;
+    border: 1.5px dashed #c7cbe0;
+    border-radius: 14px;
+    background: #fafbff;
+    cursor: pointer;
+    transition: border-color .18s ease, background .18s ease;
+    text-align: center;
+  }
+  .gfu-scope .gfu-drop:hover,
+  .gfu-scope .gfu-drop.gfu-drag {
+    border-color: #6366f1;
+    background: #f2f2ff;
+  }
+  .gfu-scope .gfu-icon {
+    color: #6366f1;
+    margin-bottom: 2px;
+  }
+  .gfu-scope .gfu-drop-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2430;
+  }
+  .gfu-scope .gfu-drop-hint {
+    font-size: 12px;
+    color: #9aa0b4;
+  }
+  .gfu-scope .gfu-file-input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+  .gfu-scope .gfu-btn {
+    all: unset;
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    text-align: center;
+    margin-top: 16px;
+    padding: 13px 16px;
+    border-radius: 12px;
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #ffffff;
+    background: linear-gradient(90deg, #4f46e5, #7c3aed);
+    cursor: pointer;
+    transition: filter .15s ease, transform .05s ease;
+  }
+  .gfu-scope .gfu-btn:hover { filter: brightness(1.06); }
+  .gfu-scope .gfu-btn:active { transform: translateY(1px); }
+  .gfu-scope .gfu-btn[disabled] {
+    background: #c8cbe0;
+    cursor: not-allowed;
+    filter: none;
+  }
+  .gfu-scope .gfu-progress-wrap {
+    display: none;
+    margin-top: 18px;
+  }
+  .gfu-scope .gfu-progress-track {
+    width: 100%;
+    height: 8px;
+    border-radius: 999px;
+    background: #eef0f6;
+    overflow: hidden;
+  }
+  .gfu-scope .gfu-progress-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #4f46e5, #7c3aed);
+    transition: width .15s ease;
+  }
+  .gfu-scope .gfu-progress-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #6b7280;
+  }
+  .gfu-scope .gfu-progress-meta span:first-child {
+    font-weight: 700;
+    color: #4338ca;
+  }
+  .gfu-scope .gfu-result {
+    margin-top: 16px;
+    font-size: 13.5px;
+    line-height: 1.7;
+    word-break: break-all;
+  }
+  .gfu-scope .gfu-result.gfu-ok {
+    color: #065f46;
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    padding: 12px 14px;
+    border-radius: 12px;
+  }
+  .gfu-scope .gfu-result.gfu-err {
+    color: #991b1b;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    padding: 12px 14px;
+    border-radius: 12px;
+  }
+  .gfu-scope .gfu-result a {
+    color: #4338ca;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .gfu-scope .gfu-result a:hover { text-decoration: underline; }
+  .gfu-scope .gfu-link-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .gfu-scope .gfu-link-row a {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .gfu-scope .gfu-copy-btn {
+    all: unset;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #4338ca;
+    background: #eef0ff;
+    border: 1px solid #d6d9f7;
+    padding: 7px 12px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease;
+  }
+  .gfu-scope .gfu-copy-btn:hover {
+    background: #e0e2ff;
+  }
+  .gfu-scope .gfu-copy-btn.gfu-copied {
+    background: #d1fae5;
+    color: #065f46;
+    border-color: #a7f3d0;
+  }
+  .gfu-scope .gfu-copy-btn svg {
+    flex-shrink: 0;
+  }
+
+  /* استجابة كاملة للشاشات الصغيرة */
+  @media (max-width: 480px) {
+    .gfu-scope .gfu-card {
+      margin: 12px 8px;
+      padding: 22px 18px 20px;
+      border-radius: 14px;
+    }
+    .gfu-scope .gfu-title { font-size: 17px; }
+    .gfu-scope .gfu-drop { padding: 20px 12px; }
+  }
+</style>
+
+<script>
+  // هەموو گۆڕاوەکان لەناو فەنکشنێکی داخراودان (IIFE) بۆ ئەوەی کێشەیان لەگەڵ سکریپتەکانی تری بلۆگەر نەبێت
+  (function () {
+    var card = document.getElementById('gfu-card-1');
+    if (!card) return;
+
+    var fileInput = document.getElementById('gfu-file-1');
+    var dropZone = document.getElementById('gfu-drop-1');
+    var dropText = document.getElementById('gfu-drop-text-1');
+    var uploadBtn = document.getElementById('gfu-btn-1');
+    var progressWrap = document.getElementById('gfu-progress-wrap-1');
+    var progressFill = document.getElementById('gfu-progress-fill-1');
+    var progressPercent = document.getElementById('gfu-progress-percent-1');
+    var progressStatus = document.getElementById('gfu-progress-status-1');
+    var resultBox = document.getElementById('gfu-result-1');
+
+    function fallbackCopy(text, onSuccess) {
+      var temp = document.createElement('textarea');
+      temp.value = text;
+      temp.style.position = 'fixed';
+      temp.style.opacity = '0';
+      document.body.appendChild(temp);
+      temp.focus();
+      temp.select();
+      try {
+        document.execCommand('copy');
+        onSuccess();
+      } catch (e) {
+        // ئەگەر کۆپیکردنی خۆکار سەرکەوتوو نەبوو، لینکەکە هێشتا بۆ کلیک کردن بەردەستە
+      }
+      document.body.removeChild(temp);
+    }
+
+    function isVideoFile(file) {
+      if (file.type) return file.type.indexOf('video/') === 0;
+      // هەندێک سیستەم جۆری فایل ناگەڕێننەوە، بۆیە پاشکۆکەی فایلەکە پشکنین دەکەین
+      return /\.(mp4|mov|mkv|avi|webm|flv|wmv|m4v|3gp|ts|mts)$/i.test(file.name);
+    }
+
+    function formatSize(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+      return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+    }
+
+    fileInput.addEventListener('change', function () {
+      resultBox.className = 'gfu-result';
+      resultBox.innerHTML = '';
+      if (fileInput.files && fileInput.files.length) {
+        var f = fileInput.files[0];
+        if (!isVideoFile(f)) {
+          fileInput.value = '';
+          dropText.textContent = 'لێرە کلیک بکە بۆ هەڵبژاردنی ڤیدیۆ';
+          resultBox.className = 'gfu-result gfu-err';
+          resultBox.textContent = 'ئەم فایلە ڤیدیۆ نییە. تکایە تەنها فایلی ڤیدیۆ هەڵبژێرە.';
+          return;
+        }
+        dropText.textContent = f.name + ' (' + formatSize(f.size) + ')';
+      } else {
+        dropText.textContent = 'لێرە کلیک بکە بۆ هەڵبژاردنی ڤیدیۆ';
+      }
+    });
+
+    ['dragover', 'dragenter'].forEach(function (evt) {
+      dropZone.addEventListener(evt, function (e) {
+        e.preventDefault();
+        dropZone.classList.add('gfu-drag');
+      });
+    });
+    ['dragleave', 'drop'].forEach(function (evt) {
+      dropZone.addEventListener(evt, function (e) {
+        e.preventDefault();
+        dropZone.classList.remove('gfu-drag');
+      });
+    });
+    dropZone.addEventListener('drop', function (e) {
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+        fileInput.files = e.dataTransfer.files;
+        fileInput.dispatchEvent(new Event('change'));
+      }
+    });
+
+    uploadBtn.addEventListener('click', function () {
+      resultBox.className = 'gfu-result';
+      resultBox.innerHTML = '';
+
+      if (!fileInput.files || !fileInput.files.length) {
+        resultBox.className = 'gfu-result gfu-err';
+        resultBox.textContent = 'تکایە سەرەتا ڤیدیۆیەک هەڵبژێرە.';
+        return;
+      }
+
+      var file = fileInput.files[0];
+
+      if (!isVideoFile(file)) {
+        resultBox.className = 'gfu-result gfu-err';
+        resultBox.textContent = 'ئەم فایلە ڤیدیۆ نییە. تکایە تەنها فایلی ڤیدیۆ هەڵبژێرە.';
+        return;
+      }
+      var formData = new FormData();
+      formData.append('file', file);
+
+      uploadBtn.setAttribute('disabled', 'disabled');
+      progressWrap.style.display = 'block';
+      progressFill.style.width = '0%';
+      progressPercent.textContent = '0%';
+      progressStatus.textContent = 'بارکردن لە پڕۆسەیە…';
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'https://upload.gofile.io/uploadfile', true);
+
+      xhr.upload.onprogress = function (e) {
+        if (e.lengthComputable) {
+          var percent = Math.round((e.loaded / e.total) * 100);
+          progressFill.style.width = percent + '%';
+          progressPercent.textContent = percent + '%';
+        }
+      };
+
+      xhr.onload = function () {
+        uploadBtn.removeAttribute('disabled');
+        progressStatus.textContent = 'تەواو بوو';
+        try {
+          var res = JSON.parse(xhr.responseText);
+          if (res.status === 'ok') {
+            var link = res.data.downloadPage;
+            resultBox.className = 'gfu-result gfu-ok';
+            resultBox.innerHTML =
+              'ڤیدیۆکە بە سەرکەوتوویی بار کرا ✅' +
+              '<div class="gfu-link-row">' +
+                '<a href="' + link + '" target="_blank" rel="noopener">' + link + '</a>' +
+                '<button type="button" class="gfu-copy-btn" id="gfu-copy-1">' +
+                  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+                    '<rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.8"/>' +
+                    '<path d="M5 15V6a2 2 0 012-2h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' +
+                  '</svg>' +
+                  '<span id="gfu-copy-label-1">کۆپیکردنی لینک</span>' +
+                '</button>' +
+              '</div>';
+
+            var copyBtn = document.getElementById('gfu-copy-1');
+            var copyLabel = document.getElementById('gfu-copy-label-1');
+            copyBtn.addEventListener('click', function () {
+              var resetLabel = function () {
+                copyBtn.classList.remove('gfu-copied');
+                copyLabel.textContent = 'کۆپیکردنی لینک';
+              };
+              var showCopied = function () {
+                copyBtn.classList.add('gfu-copied');
+                copyLabel.textContent = 'کۆپی کرا ✓';
+                setTimeout(resetLabel, 2000);
+              };
+              if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(link).then(showCopied, function () {
+                  fallbackCopy(link, showCopied);
+                });
+              } else {
+                fallbackCopy(link, showCopied);
+              }
+            });
+          } else {
+            resultBox.className = 'gfu-result gfu-err';
+            resultBox.textContent = 'بارکردن شکستی هێنا، تکایە دووبارە هەوڵ بدەرەوە.';
+          }
+        } catch (err) {
+          resultBox.className = 'gfu-result gfu-err';
+          resultBox.textContent = 'نەتوانرا وەڵامی سێرڤەر بخوێنرێتەوە.';
+        }
+      };
+
+      xhr.onerror = function () {
+        uploadBtn.removeAttribute('disabled');
+        progressStatus.textContent = 'شکستی هێنا';
+        resultBox.className = 'gfu-result gfu-err';
+        resultBox.textContent = 'هەڵەیەک ڕوویدا لە کاتی پەیوەندیکردن بە سێرڤەرەوە، تکایە پەیوەندی ئینتەرنێتەکەت بپشکنە.';
+      };
+
+      xhr.send(formData);
+    });
+  })();
+</script>

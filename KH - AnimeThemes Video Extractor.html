@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AnimeThemes Video Extractor</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Fira+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#060810; --bg2:#0c1020; --bg3:#111827;
+    --accent:#7c3aed; --accent2:#a78bfa; --accent3:#06b6d4;
+    --success:#10b981; --text:#e2e8f0; --muted:#64748b;
+    --border:rgba(124,58,237,0.25);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(124,58,237,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(124,58,237,0.04) 1px,transparent 1px);background-size:50px 50px;pointer-events:none;z-index:0}
+  body::after{content:'';position:fixed;width:600px;height:600px;background:radial-gradient(circle,rgba(124,58,237,0.08) 0%,transparent 70%);top:-200px;left:-200px;pointer-events:none;z-index:0;animation:drift 15s ease-in-out infinite alternate}
+  @keyframes drift{from{transform:translate(0,0)}to{transform:translate(80px,80px)}}
+  .container{position:relative;z-index:1;max-width:980px;margin:0 auto;padding:24px 20px 80px}
+
+  /* ─── Header ─── */
+  .header{text-align:center;padding:48px 0 36px;position:relative}
+  .header::after{content:'';display:block;width:200px;height:1px;background:linear-gradient(90deg,transparent,var(--accent2),transparent);margin:24px auto 0}
+  .logo-text{font-size:11px;letter-spacing:6px;color:var(--accent2);text-transform:uppercase;opacity:.8;margin-bottom:12px;font-family:'Share Tech Mono',monospace}
+  h1{font-size:clamp(26px,5vw,46px);font-weight:900;line-height:1.15;background:linear-gradient(135deg,#fff 30%,var(--accent2) 70%,var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px}
+  .subtitle{color:var(--muted);font-size:15px;font-weight:300}
+
+  /* ─── Input ─── */
+  .input-section{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:24px;position:relative;overflow:hidden}
+  .input-section::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent3))}
+  label{display:block;font-size:12px;color:var(--accent2);margin-bottom:10px;letter-spacing:1px;text-transform:uppercase;font-weight:700}
+  .input-row{display:flex;gap:12px;align-items:stretch}
+  input[type=text]{flex:1;background:var(--bg3);border:1px solid rgba(124,58,237,0.3);border-radius:10px;padding:14px 18px;color:var(--text);font-size:14px;font-family:'Share Tech Mono',monospace;outline:none;transition:border-color .2s,box-shadow .2s;direction:ltr}
+  input[type=text]::placeholder{color:var(--muted)}
+  input[type=text]:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(124,58,237,0.15)}
+  .info-banner{display:flex;align-items:flex-start;gap:12px;background:rgba(6,182,212,0.06);border:1px solid rgba(6,182,212,0.2);border-radius:10px;padding:14px 16px;margin-top:16px;font-size:13px;color:#94a3b8;line-height:1.6}
+
+  /* ─── Buttons ─── */
+  .btn{padding:14px 22px;border:none;border-radius:10px;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:14px;font-weight:700;transition:all .2s;white-space:nowrap;display:inline-flex;align-items:center;gap:7px}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),#6d28d9);color:#fff;box-shadow:0 0 20px rgba(124,58,237,0.3)}
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 0 30px rgba(124,58,237,0.5)}
+  .btn-secondary{background:var(--bg3);color:var(--accent2);border:1px solid var(--border)}
+  .btn-secondary:hover{background:rgba(124,58,237,0.1);border-color:var(--accent2)}
+  .btn-copy{background:rgba(6,182,212,0.1);color:var(--accent3);border:1px solid rgba(6,182,212,0.3);font-size:13px;padding:8px 14px}
+  .btn-copy:hover{background:rgba(6,182,212,0.2)}
+  .btn-copy.copied{color:var(--success);border-color:var(--success);background:rgba(16,185,129,0.1)}
+  .btn-blogger{background:linear-gradient(135deg,#f97316,#ea580c);color:#fff;font-size:13px;padding:8px 14px;box-shadow:0 0 16px rgba(249,115,22,0.3)}
+  .btn-blogger:hover{box-shadow:0 0 24px rgba(249,115,22,0.5)}
+
+  /* ─── Loading / Error ─── */
+  .loading{display:none;text-align:center;padding:40px;color:var(--muted)}
+  .loading.active{display:block}
+  .spinner{width:40px;height:40px;border:2px solid rgba(124,58,237,0.2);border-top-color:var(--accent2);border-radius:50%;margin:0 auto 16px;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .error-box{display:none;background:rgba(244,63,94,0.08);border:1px solid rgba(244,63,94,0.3);border-radius:10px;padding:14px 18px;color:#fda4af;font-size:14px;margin-bottom:20px;gap:10px;align-items:flex-start}
+  .error-box.active{display:flex}
+
+  /* ─── Results ─── */
+  .results-section{display:none}
+  .results-section.active{display:block}
+  .results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:12px}
+  .results-title{font-size:18px;font-weight:700}
+  .anime-title-display{font-size:13px;color:var(--accent2);font-family:'Share Tech Mono',monospace;margin-top:4px}
+  .count-badge{background:rgba(124,58,237,0.2);color:var(--accent2);border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-size:13px;font-family:'Share Tech Mono',monospace}
+
+  /* ─── Video Cards ─── */
+  .videos-grid{display:grid;gap:14px;margin-bottom:28px}
+  .video-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:border-color .2s,box-shadow .2s;animation:fadeUp .3s ease forwards;opacity:0;transform:translateY(10px)}
+  @keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+  .video-card:hover{border-color:rgba(124,58,237,0.5);box-shadow:0 4px 24px rgba(124,58,237,0.12)}
+  .card-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);background:rgba(124,58,237,0.04);flex-wrap:wrap;gap:8px}
+  .theme-info{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .theme-type{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:3px 8px;border-radius:4px;font-family:'Share Tech Mono',monospace}
+  .type-op{background:rgba(251,146,60,0.15);color:#fb923c;border:1px solid rgba(251,146,60,0.3)}
+  .type-ed{background:rgba(167,139,250,0.15);color:var(--accent2);border:1px solid rgba(167,139,250,0.3)}
+  .theme-name{font-weight:600;font-size:14px}
+  .theme-artist{font-size:12px;color:var(--muted)}
+  .card-body{padding:14px 16px}
+  .url-preview{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);background:var(--bg3);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:9px 12px;margin-bottom:12px;word-break:break-all;direction:ltr;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .card-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+  /* ─── Tabs + Script ─── */
+  .script-section{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:24px;position:relative}
+  .script-section::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent3),var(--accent))}
+  .script-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:10px}
+  .script-title{font-size:13px;font-weight:700;color:var(--accent3);text-transform:uppercase;letter-spacing:1px}
+  .tabs{display:flex;gap:4px;flex-wrap:wrap}
+  .tab{padding:6px 13px;border-radius:6px;font-size:12px;font-family:'Share Tech Mono',monospace;cursor:pointer;transition:all .15s;background:transparent;border:1px solid transparent;color:var(--muted)}
+  .tab.active{background:rgba(124,58,237,0.2);border-color:var(--border);color:var(--accent2)}
+  .tab.tab-blogger{color:#fb923c}
+  .tab.tab-blogger.active{background:rgba(249,115,22,0.15);border-color:rgba(249,115,22,0.3);color:#fb923c}
+  .tab:hover:not(.active){color:var(--text)}
+  .script-body{padding:18px}
+  .code-block{background:var(--bg);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:16px;font-family:'Share Tech Mono',monospace;font-size:12px;line-height:1.7;color:#a5f3fc;overflow-x:auto;white-space:pre;direction:ltr;text-align:left;max-height:380px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--accent) transparent}
+  .code-block::-webkit-scrollbar{width:4px;height:4px}
+  .code-block::-webkit-scrollbar-thumb{background:var(--accent);border-radius:4px}
+  .copy-all-row{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;flex-wrap:wrap}
+
+  /* ─── Blogger Preview ─── */
+  .blogger-preview{margin-top:20px;background:var(--bg3);border:1px solid rgba(249,115,22,0.25);border-radius:12px;overflow:hidden}
+  .blogger-preview-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(249,115,22,0.06);border-bottom:1px solid rgba(249,115,22,0.15);flex-wrap:wrap;gap:8px}
+  .blogger-preview-title{font-size:12px;font-weight:700;color:#fb923c;text-transform:uppercase;letter-spacing:1px}
+  .blogger-note{font-size:11px;color:var(--muted);background:rgba(249,115,22,0.05);border:1px solid rgba(249,115,22,0.15);border-radius:8px;padding:10px 14px;margin:14px 0 0;line-height:1.7;direction:rtl}
+  .blogger-note b{color:#fb923c}
+  #bloggerPreviewFrame{padding:16px}
+
+  @media(max-width:600px){
+    .input-row,.card-actions,.copy-all-row{flex-direction:column}
+    .script-header{flex-direction:column;align-items:flex-start}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-text">AnimeThemes.moe</div>
+    <h1>دەرهێنانی لینکی ئەنیمێ</h1>
+    <p class="subtitle">استخرج روابط الفيديو وحوّلها إلى سكريبت مشاهدة — يدعم بلوجر بدون تخريب القالب</p>
+  </div>
+
+  <!-- Input -->
+  <div class="input-section">
+    <label>لینکی پەیجی ئەنیمێ یان ناوی Slug</label>
+    <div class="input-row">
+      <input type="text" id="animeUrl" placeholder="https://animethemes.moe/anime/shingeki_no_kyojin" />
+      <button class="btn btn-primary" onclick="fetchAnime()">⚡ دەرهێنان</button>
+    </div>
+    <div class="info-banner">
+      <span style="font-size:18px;flex-shrink:0">ℹ️</span>
+      <div>يستخدم <b>AnimeThemes API</b> الرسمي. أدخل الرابط الكامل أو slug مثل <code style="color:var(--accent3)">sword_art_online</code>. تبويب <b style="color:#fb923c">Blogger</b> يولد ويجر مشغّل HTML معزول بـ Shadow DOM لا يتعارض مع قالب البلوجر.</div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <div>جاري جلب البيانات من AnimeThemes API...</div>
+  </div>
+
+  <!-- Error -->
+  <div class="error-box" id="errorBox"><span>⚠️</span><span id="errorMsg"></span></div>
+
+  <!-- Results -->
+  <div class="results-section" id="results">
+
+    <div class="results-header">
+      <div>
+        <div class="results-title">نتائج الاستخراج</div>
+        <div class="anime-title-display" id="animeTitleDisplay"></div>
+      </div>
+      <span class="count-badge" id="countBadge">0 فيديو</span>
+    </div>
+
+    <!-- Cards -->
+    <div class="videos-grid" id="videosGrid"></div>
+
+    <!-- Script Tabs -->
+    <div class="script-section">
+      <div class="script-header">
+        <div class="script-title">🖥️ سكريبت المشاهدة</div>
+        <div class="tabs">
+          <button class="tab active"        onclick="switchTab('bash',this)">Bash</button>
+          <button class="tab"               onclick="switchTab('python',this)">Python</button>
+          <button class="tab"               onclick="switchTab('m3u',this)">M3U</button>
+          <button class="tab"               onclick="switchTab('mpv',this)">MPV</button>
+          <button class="tab tab-blogger"   onclick="switchTab('blogger',this)">🟠 Blogger</button>
+        </div>
+      </div>
+      <div class="script-body">
+        <div class="code-block" id="codeBlock"></div>
+
+        <!-- Blogger extras -->
+        <div id="bloggerExtras" style="display:none">
+          <div class="blogger-note">
+            <b>📋 تعليمات نشر ويدجت البلوجر:</b><br>
+            ١. انسخ الكود أعلاه كاملاً<br>
+            ٢. في لوحة البلوجر → <b>تخطيط → إضافة أداة → HTML/JavaScript</b><br>
+            ٣. أو الصقه مباشرةً داخل مقال بعد التبديل إلى وضع <b>HTML</b><br>
+            ٤. الويدجت معزول بـ <b>Shadow DOM</b> — لن يؤثر على ألوان أو خطوط قالبك<br>
+            ٥. يعمل على الجوال والحاسوب ويدعم التشغيل التلقائي للمقطع التالي
+          </div>
+          <div class="blogger-preview">
+            <div class="blogger-preview-header">
+              <span class="blogger-preview-title">👁 معاينة مباشرة للويدجت</span>
+              <button class="btn btn-blogger" onclick="copyAll()" id="copyBloggerBtn">📋 نسخ كود الويدجت</button>
+            </div>
+            <div id="bloggerPreviewFrame"></div>
+          </div>
+        </div>
+
+        <div class="copy-all-row" id="copyAllRow">
+          <button class="btn btn-copy" id="copyAllBtn" onclick="copyAll()">📋 نسخ السكريبت كاملاً</button>
+          <button class="btn btn-secondary" onclick="downloadScript()" style="font-size:13px;padding:8px 14px">⬇️ تحميل</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* =====================================================
+   STATE
+===================================================== */
+let videoData = [];
+let currentTab = 'bash';
+let animeSlug = '';
+let animeTitle = '';
+
+/* =====================================================
+   FETCH
+===================================================== */
+function getSlug(raw) {
+  raw = raw.trim();
+  const m = raw.match(/animethemes\.moe\/anime\/([^\/\?#]+)/);
+  if (m) return m[1];
+  if (/^[a-z0-9_]+$/i.test(raw)) return raw;
+  return null;
+}
+
+async function fetchAnime() {
+  const slug = getSlug(document.getElementById('animeUrl').value);
+  if (!slug) { showError('الرابط غير صحيح. أدخل رابط animethemes.moe أو slug الأنمي.'); return; }
+  animeSlug = slug;
+  clearResults();
+  showLoading(true);
+  try {
+    const res = await fetch(`https://api.animethemes.moe/anime/${slug}?include=animethemes.animethemeentries.videos,animethemes.song.artists`);
+    if (!res.ok) throw new Error(`خطأ ${res.status}: لم يُعثر على الأنمي`);
+    processData(await res.json());
+  } catch(e) { showError(e.message || 'فشل الاتصال بـ API'); }
+  finally { showLoading(false); }
+}
+
+function processData(data) {
+  const anime = data.anime;
+  animeTitle = anime.name;
+  videoData = [];
+  (anime.animethemes || []).forEach(theme => {
+    const type = theme.type || 'OP';
+    const seq  = theme.sequence || '';
+    const song = theme.song ? theme.song.name : 'Unknown';
+    const artists = theme.song && theme.song.artists ? theme.song.artists.map(a=>a.name).join(', ') : '';
+    (theme.animethemeentries || []).forEach(entry => {
+      (entry.videos || []).forEach(vid => {
+        if (vid.link) videoData.push({
+          type, seq, label:`${type}${seq}`, song, artists,
+          url: vid.link,
+          resolution: vid.resolution || '',
+          tags: vid.tags || '',
+          nc: vid.nc || false
+        });
+      });
+    });
+  });
+  if (!videoData.length) { showError('لا توجد روابط فيديو لهذا الأنمي.'); return; }
+  document.getElementById('animeTitleDisplay').textContent = animeTitle;
+  document.getElementById('countBadge').textContent = `${videoData.length} فيديو`;
+  renderCards();
+  renderScript();
+  document.getElementById('results').classList.add('active');
+}
+
+/* =====================================================
+   CARDS
+===================================================== */
+function renderCards() {
+  const grid = document.getElementById('videosGrid');
+  grid.innerHTML = '';
+  videoData.forEach((v, i) => {
+    const card = document.createElement('div');
+    card.className = 'video-card';
+    card.style.animationDelay = Math.min(i*55,500)+'ms';
+    const meta = [v.resolution?v.resolution+'p':'', v.nc?'NC':'', v.tags].filter(Boolean).join(' · ');
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="theme-info">
+          <span class="theme-type ${v.type==='OP'?'type-op':'type-ed'}">${v.label}</span>
+          <div><div class="theme-name">${esc(v.song)}</div>${v.artists?`<div class="theme-artist">${esc(v.artists)}</div>`:''}</div>
+        </div>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">${meta}</span>
+      </div>
+      <div class="card-body">
+        <div class="url-preview" title="${esc(v.url)}">${esc(v.url)}</div>
+        <div class="card-actions">
+          <button class="btn btn-copy" onclick="copyText('${ea(v.url)}',this)">📋 کۆپی لینک </button>
+          <a href="${ea(v.url)}" target="_blank" class="btn btn-secondary" style="font-size:13px;padding:8px 14px;text-decoration:none">🔗 فتح</a>
+          <button class="btn btn-secondary" style="font-size:13px;padding:8px 14px" onclick="copyText('mpv --title=\\'${ea(v.song)}\\' \\'${ea(v.url)}\\'',this)">🎬 أمر MPV</button>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+/* =====================================================
+   SCRIPTS GENERATOR
+===================================================== */
+function generateScript(type) {
+  const labeled = videoData.map(v => ({ label:`${v.label} - ${v.song}`, artist:v.artists, url:v.url, type:v.type, res:v.resolution?v.resolution+'p':'', nc:v.nc }));
+
+  if (type === 'bash') return `#!/usr/bin/env bash
+# ══════════════════════════════════════
+#  AnimeThemes Player — ${animeTitle}
+#  تاريخ: ${new Date().toLocaleDateString('ar-EG')}  |  عدد المقاطع: ${videoData.length}
+# ══════════════════════════════════════
+
+declare -A VIDEOS=(
+${labeled.map(v=>`  ["${v.label}"]="${v.url}"`).join('\n')}
+)
+
+echo "🎌 ${animeTitle}"
+i=1; for k in "\${!VIDEOS[@]}"; do echo "  $i) $k"; ((i++)); done; echo ""
+
+# لمشاهدة الكل بالترتيب:
+${labeled.map(v=>`mpv --title="${v.label}" "${v.url}"`).join('\n')}`;
+
+  if (type === 'python') return `#!/usr/bin/env python3
+# AnimeThemes Player — ${animeTitle}
+import subprocess, sys
+
+ANIME = "${animeTitle}"
+videos = [
+${labeled.map(v=>`  {"label":"${v.label}","url":"${v.url}"},`).join('\n')}
+]
+
+def list_videos():
+    print(f"\\n🎌 {ANIME}")
+    for i,v in enumerate(videos,1): print(f"  {i:2}. {v['label']}")
+
+def play(i): subprocess.run(["mpv",f"--title={videos[i-1]['label']}",videos[i-1]["url"]])
+def play_all():
+    for v in videos: subprocess.run(["mpv",f"--title={v['label']}",v["url"]])
+
+if __name__=="__main__":
+    list_videos()
+    try:
+        c = (sys.argv[1] if len(sys.argv)>1 else input("\\nرقم الفيديو أو 'all': ")).strip()
+        play_all() if c=="all" else play(int(c))
+    except (KeyboardInterrupt,EOFError,ValueError): print("\\nإلغاء.")`;
+
+  if (type === 'm3u') return `#EXTM3U\n#PLAYLIST:${animeTitle}\n${labeled.map(v=>`#EXTINF:-1,${v.label}\n${v.url}`).join('\n')}`;
+
+  if (type === 'mpv') return `# ── أوامر MPV المباشرة ── ${animeTitle}
+# الصق أي أمر في الطرفية:
+
+${labeled.map(v=>`# ${v.label}\nmpv --title="${v.label}" "${v.url}"\n`).join('\n')}
+# ── Playlist كاملة ──
+mpv \\
+${labeled.map((v,i)=>`  "${v.url}"${i<labeled.length-1?' \\':''}`).join('\n')}`;
+
+  if (type === 'blogger') return generateBloggerWidget(labeled);
+  return '';
+}
+
+/* =====================================================
+   BLOGGER WIDGET GENERATOR
+   - Shadow DOM معزول تماماً
+   - لا يرث أي CSS من البلوجر
+   - لا يستخدم import/require
+   - متوافق مع Blogger HTML gadget وHTMLجزء المقال
+===================================================== */
+function generateBloggerWidget(labeled) {
+  const itemsJson = JSON.stringify(labeled, null, 2);
+  return `<!-- ═══════════════════════════════════════════════
+     AnimeThemes Player Widget — ${animeTitle}
+     نسخه آمنة للبلوجر (Shadow DOM معزول)
+     انسخ الكود كاملاً والصقه في HTML/JavaScript Gadget
+═══════════════════════════════════════════════ -->
+<div id="at-player-root"></div>
+
+<script>
+(function() {
+  /* ─── بيانات الفيديو ─── */
+  var ANIME_TITLE = ${JSON.stringify(animeTitle)};
+  var VIDEOS = ${itemsJson};
+
+  /* ─── إنشاء Shadow DOM معزول ─── */
+  var host = document.getElementById('at-player-root');
+  if (!host) return;
+  var shadow = host.attachShadow({ mode: 'open' });
+
+  /* ─── CSS داخل Shadow (لا يتسرب للخارج) ─── */
+  var style = document.createElement('style');
+  style.textContent = [
+    "@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;900&display=swap');",
+    "*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}",
+    ":host{display:block;font-family:'Tajawal',sans-serif;direction:rtl;--c1:#7c3aed;--c2:#a78bfa;--c3:#06b6d4;--bg:#0c0f1a;--bg2:#111827;--muted:#64748b;--border:rgba(124,58,237,0.25)}",
+    ".wrap{background:var(--bg);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.55);max-width:100%}",
+    /* top bar */
+    ".top-bar{padding:10px 14px;background:rgba(124,58,237,0.08);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}",
+    ".anime-name{font-size:13px;font-weight:700;color:var(--c2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
+    ".ep-count{font-size:11px;color:var(--muted);flex-shrink:0}",
+    /* video */
+    ".vid-wrap{position:relative;background:#000;aspect-ratio:16/9}",
+    "video{width:100%;height:100%;display:block;background:#000}",
+    ".vid-overlay{position:absolute;bottom:0;left:0;right:0;padding:24px 14px 10px;background:linear-gradient(transparent,rgba(0,0,0,0.88));pointer-events:none}",
+    ".ov-title{color:#fff;font-size:14px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
+    ".ov-artist{color:rgba(255,255,255,0.55);font-size:11px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
+    /* controls */
+    ".controls{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--bg2);border-bottom:1px solid var(--border);flex-wrap:wrap}",
+    ".cbtn{background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);color:var(--c2);border-radius:7px;padding:6px 13px;font-size:13px;cursor:pointer;font-family:inherit;transition:background .15s;white-space:nowrap}",
+    ".cbtn:hover{background:rgba(124,58,237,0.3)}",
+    ".vol{display:flex;align-items:center;gap:6px;margin-right:auto}",
+    ".vol input[type=range]{width:75px;accent-color:var(--c1)}",
+    ".vol span{font-size:12px;color:var(--muted)}",
+    /* playlist */
+    ".plist{max-height:230px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--c1) transparent}",
+    ".plist::-webkit-scrollbar{width:3px}.plist::-webkit-scrollbar-thumb{background:var(--c1);border-radius:3px}",
+    ".pi{display:flex;align-items:center;gap:9px;padding:10px 12px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.04);transition:background .12s}",
+    ".pi:hover{background:rgba(124,58,237,0.08)}",
+    ".pi.active{background:rgba(124,58,237,0.15);border-right:3px solid var(--c1)}",
+    ".badge{font-size:10px;font-weight:700;letter-spacing:1px;padding:2px 7px;border-radius:4px;flex-shrink:0}",
+    ".op-b{background:rgba(251,146,60,0.15);color:#fb923c;border:1px solid rgba(251,146,60,0.3)}",
+    ".ed-b{background:rgba(167,139,250,0.15);color:#a78bfa;border:1px solid rgba(167,139,250,0.3)}",
+    ".pi-info{flex:1;min-width:0}",
+    ".pi-title{font-size:13px;color:#e2e8f0;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
+    ".pi-sub{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
+    ".pi-res{font-size:10px;color:#475569;flex-shrink:0}",
+    /* now bar */
+    ".now-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--bg);border-top:1px solid rgba(255,255,255,0.05);gap:8px;flex-wrap:wrap}",
+    ".now-txt{font-size:11px;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
+    ".now-name{color:var(--c1);font-weight:700}",
+    ".cpbtn{font-size:11px;padding:4px 10px;background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.3);color:#06b6d4;border-radius:5px;cursor:pointer;font-family:inherit;white-space:nowrap}",
+    ".cpbtn:hover{background:rgba(6,182,212,0.22)}",
+  ].join('');
+  shadow.appendChild(style);
+
+  /* ─── HTML داخل Shadow ─── */
+  var wrap = document.createElement('div');
+  wrap.className = 'wrap';
+  wrap.innerHTML = \`
+    <div class="top-bar">
+      <span class="anime-name">\${escH(ANIME_TITLE)}</span>
+      <span class="ep-count">\${VIDEOS.length} بەش</span>
+    </div>
+    <div class="vid-wrap">
+      <video id="vid" controls preload="metadata"></video>
+      <div class="vid-overlay">
+        <div class="ov-title" id="ov-t">اختر مقطعاً من القائمة أدناه</div>
+        <div class="ov-artist" id="ov-a"></div>
+      </div>
+    </div>
+    <div class="controls">
+      <button class="cbtn" id="btn-p">⏭ پێشووتر</button>
+      <button class="cbtn" id="btn-n">دواتر ⏮</button>
+      <div class="vol">
+        <span>🔊</span>
+        <input type="range" id="vol" min="0" max="1" step="0.05" value="1">
+      </div>
+    </div>
+    <div class="plist" id="plist"></div>
+    <div class="now-bar">
+      <span class="now-txt">لە ئێستادا سەیری: <span class="now-name" id="now-n">—</span></span>
+      <button class="cpbtn" id="cpbtn">📋 کۆپی لینک </button>
+    </div>
+  \`;
+  shadow.appendChild(wrap);
+
+  /* ─── منطق المشغّل ─── */
+  var vid   = shadow.getElementById('vid');
+  var plist = shadow.getElementById('plist');
+  var ovT   = shadow.getElementById('ov-t');
+  var ovA   = shadow.getElementById('ov-a');
+  var nowN  = shadow.getElementById('now-n');
+  var cpbtn = shadow.getElementById('cpbtn');
+  var volEl = shadow.getElementById('vol');
+  var cur   = -1;
+
+  function escH(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  /* بناء قائمة التشغيل */
+  VIDEOS.forEach(function(v, i) {
+    var el = document.createElement('div');
+    el.className = 'pi';
+    var shortType = v.label.split(' - ')[0];
+    var songName  = v.label.replace(/^[^ ]+ - /, '');
+    el.innerHTML =
+      '<span class="badge ' + (v.type==='OP'?'op-b':'ed-b') + '">' + escH(shortType) + '</span>' +
+      '<div class="pi-info">' +
+        '<div class="pi-title">' + escH(songName) + '</div>' +
+        (v.artist ? '<div class="pi-sub">' + escH(v.artist) + '</div>' : '') +
+      '</div>' +
+      (v.res ? '<span class="pi-res">' + escH(v.res) + '</span>' : '');
+    el.addEventListener('click', function(){ play(i); });
+    plist.appendChild(el);
+  });
+
+  function play(i) {
+    if (i < 0 || i >= VIDEOS.length) return;
+    cur = i;
+    var v = VIDEOS[i];
+    vid.src = v.url;
+    vid.play().catch(function(){});
+    ovT.textContent  = v.label;
+    ovA.textContent  = v.artist || '';
+    nowN.textContent = v.label;
+    plist.querySelectorAll('.pi').forEach(function(el, idx){
+      el.classList.toggle('active', idx === i);
+    });
+    var active = plist.querySelectorAll('.pi')[i];
+    if (active) active.scrollIntoView({ block:'nearest' });
+  }
+
+  shadow.getElementById('btn-p').addEventListener('click', function(){ play(cur - 1); });
+  shadow.getElementById('btn-n').addEventListener('click', function(){ play(cur + 1); });
+  vid.addEventListener('ended',  function(){ if (cur < VIDEOS.length - 1) play(cur + 1); });
+  volEl.addEventListener('input',function(){ vid.volume = parseFloat(volEl.value); });
+  cpbtn.addEventListener('click',function(){
+    if (cur < 0) return;
+    navigator.clipboard.writeText(VIDEOS[cur].url).then(function(){
+      cpbtn.textContent = '✅ تم النسخ';
+      setTimeout(function(){ cpbtn.textContent = '📋کۆپی لینک '; }, 2200);
+    });
+  });
+
+  /* تشغيل أول مقطع تلقائياً */
+  if (VIDEOS.length > 0) play(0);
+
+})();
+<\/script>
+<!-- نهاية AnimeThemes Player Widget -->`;
+}
+
+/* =====================================================
+   TABS
+===================================================== */
+function switchTab(tab, el) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderScript();
+
+  const bloggerExtras = document.getElementById('bloggerExtras');
+  const copyAllRow    = document.getElementById('copyAllRow');
+  if (tab === 'blogger') {
+    bloggerExtras.style.display = 'block';
+    copyAllRow.style.display    = 'none';
+    renderBloggerPreview();
+  } else {
+    bloggerExtras.style.display = 'none';
+    copyAllRow.style.display    = 'flex';
+  }
+}
+
+function renderScript() {
+  document.getElementById('codeBlock').textContent = generateScript(currentTab);
+}
+
+/* =====================================================
+   BLOGGER LIVE PREVIEW (Shadow DOM real render)
+===================================================== */
+function renderBloggerPreview() {
+  const container = document.getElementById('bloggerPreviewFrame');
+  container.innerHTML = '';
+  const host = document.createElement('div');
+  host.id = 'at-preview-host';
+  container.appendChild(host);
+
+  const labeled = videoData.map(v => ({
+    label: `${v.label} - ${v.song}`,
+    artist: v.artists || '',
+    url: v.url,
+    type: v.type,
+    res: v.resolution ? v.resolution + 'p' : '',
+    nc: v.nc || false
+  }));
+
+  const shadow = host.attachShadow({ mode:'open' });
+
+  const style = document.createElement('style');
+  style.textContent = [
+    "@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;900&display=swap');",
+    "*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}",
+    ":host{display:block;font-family:'Tajawal',sans-serif;direction:rtl}",
+    ".wrap{background:#0c0f1a;border:1.5px solid rgba(124,58,237,0.3);border-radius:12px;overflow:hidden;box-shadow:0 6px 32px rgba(0,0,0,0.5)}",
+    ".top-bar{padding:10px 14px;background:rgba(124,58,237,0.08);border-bottom:1px solid rgba(124,58,237,0.2);display:flex;align-items:center;gap:8px}",
+    ".anime-name{font-size:13px;font-weight:700;color:#a78bfa;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
+    ".ep-count{font-size:11px;color:#64748b}",
+    ".vid-wrap{position:relative;background:#000;aspect-ratio:16/9}",
+    "video{width:100%;height:100%;display:block;background:#000}",
+    ".vid-overlay{position:absolute;bottom:0;left:0;right:0;padding:24px 14px 10px;background:linear-gradient(transparent,rgba(0,0,0,0.88));pointer-events:none}",
+    ".ov-title{color:#fff;font-size:14px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
+    ".ov-artist{color:rgba(255,255,255,0.55);font-size:11px;margin-top:2px}",
+    ".controls{display:flex;align-items:center;gap:8px;padding:9px 12px;background:#111827;border-bottom:1px solid rgba(255,255,255,0.06);flex-wrap:wrap}",
+    ".cbtn{background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);color:#a78bfa;border-radius:7px;padding:6px 13px;font-size:13px;cursor:pointer;font-family:inherit;transition:background .15s}",
+    ".cbtn:hover{background:rgba(124,58,237,0.3)}",
+    ".vol{display:flex;align-items:center;gap:6px;margin-right:auto}",
+    ".vol input[type=range]{width:75px;accent-color:#7c3aed}",
+    ".vol span{font-size:12px;color:#64748b}",
+    ".plist{max-height:210px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#7c3aed transparent}",
+    ".plist::-webkit-scrollbar{width:3px}.plist::-webkit-scrollbar-thumb{background:#7c3aed;border-radius:3px}",
+    ".pi{display:flex;align-items:center;gap:9px;padding:10px 12px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.04);transition:background .12s}",
+    ".pi:hover{background:rgba(124,58,237,0.08)}",
+    ".pi.active{background:rgba(124,58,237,0.15);border-right:3px solid #7c3aed}",
+    ".badge{font-size:10px;font-weight:700;letter-spacing:1px;padding:2px 7px;border-radius:4px;flex-shrink:0}",
+    ".op-b{background:rgba(251,146,60,0.15);color:#fb923c;border:1px solid rgba(251,146,60,0.3)}",
+    ".ed-b{background:rgba(167,139,250,0.15);color:#a78bfa;border:1px solid rgba(167,139,250,0.3)}",
+    ".pi-info{flex:1;min-width:0}",
+    ".pi-title{font-size:13px;color:#e2e8f0;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
+    ".pi-sub{font-size:11px;color:#64748b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
+    ".pi-res{font-size:10px;color:#475569;flex-shrink:0}",
+    ".now-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#0c0f1a;border-top:1px solid rgba(255,255,255,0.05);gap:8px;flex-wrap:wrap}",
+    ".now-txt{font-size:11px;color:#64748b;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
+    ".now-name{color:#7c3aed;font-weight:700}",
+    ".cpbtn{font-size:11px;padding:4px 10px;background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.3);color:#06b6d4;border-radius:5px;cursor:pointer;font-family:inherit}",
+    ".cpbtn:hover{background:rgba(6,182,212,0.22)}",
+  ].join('');
+  shadow.appendChild(style);
+
+  const wrap = document.createElement('div');
+  wrap.className = 'wrap';
+  wrap.innerHTML = `
+    <div class="top-bar">
+      <span class="anime-name">${esc(animeTitle)}</span>
+      <span class="ep-count">${labeled.length} بەش</span>
+    </div>
+    <div class="vid-wrap">
+      <video id="vid" controls preload="metadata"></video>
+      <div class="vid-overlay">
+        <div class="ov-title" id="ov-t">اختر مقطعاً من القائمة أدناه</div>
+        <div class="ov-artist" id="ov-a"></div>
+      </div>
+    </div>
+    <div class="controls">
+      <button class="cbtn" id="btn-p">⏭ پێشووتر</button>
+      <button class="cbtn" id="btn-n">دواتر ⏮</button>
+      <div class="vol"><span>🔊</span><input type="range" id="vol" min="0" max="1" step="0.05" value="1"></div>
+    </div>
+    <div class="plist" id="plist"></div>
+    <div class="now-bar">
+      <span class="now-txt">لە ئێستادا سەیری: <span class="now-name" id="now-n">—</span></span>
+      <button class="cpbtn" id="cpbtn">📋 کۆپی لینک </button>
+    </div>`;
+  shadow.appendChild(wrap);
+
+  const vid    = shadow.getElementById('vid');
+  const plist  = shadow.getElementById('plist');
+  const ovT    = shadow.getElementById('ov-t');
+  const ovA    = shadow.getElementById('ov-a');
+  const nowN   = shadow.getElementById('now-n');
+  const cpbtn  = shadow.getElementById('cpbtn');
+  const volEl  = shadow.getElementById('vol');
+  let cur = -1;
+
+  labeled.forEach((v, i) => {
+    const el = document.createElement('div');
+    el.className = 'pi';
+    const shortType = v.label.split(' - ')[0];
+    const songName  = v.label.replace(/^[^ ]+ - /, '');
+    el.innerHTML =
+      `<span class="badge ${v.type==='OP'?'op-b':'ed-b'}">${esc(shortType)}</span>` +
+      `<div class="pi-info"><div class="pi-title">${esc(songName)}</div>` +
+      (v.artist ? `<div class="pi-sub">${esc(v.artist)}</div>` : '') +
+      `</div>` + (v.res ? `<span class="pi-res">${v.res}</span>` : '');
+    el.addEventListener('click', () => play(i));
+    plist.appendChild(el);
+  });
+
+  function play(i) {
+    if (i < 0 || i >= labeled.length) return;
+    cur = i; const v = labeled[i];
+    vid.src = v.url; vid.play().catch(()=>{});
+    ovT.textContent = v.label; ovA.textContent = v.artist || '';
+    nowN.textContent = v.label;
+    shadow.querySelectorAll('.pi').forEach((el,idx) => el.classList.toggle('active', idx===i));
+    plist.querySelectorAll('.pi')[i].scrollIntoView({ block:'nearest' });
+  }
+
+  shadow.getElementById('btn-p').addEventListener('click', () => play(cur - 1));
+  shadow.getElementById('btn-n').addEventListener('click', () => play(cur + 1));
+  vid.addEventListener('ended', () => { if (cur < labeled.length-1) play(cur+1); });
+  volEl.addEventListener('input', () => { vid.volume = parseFloat(volEl.value); });
+  cpbtn.addEventListener('click', () => {
+    if (cur < 0) return;
+    navigator.clipboard.writeText(labeled[cur].url).then(() => {
+      cpbtn.textContent = '✅ کۆپی کرا';
+      setTimeout(() => { cpbtn.textContent = '📋 لینکی کۆپی'; }, 2200);
+    });
+  });
+
+  if (labeled.length > 0) play(0);
+}
+
+/* =====================================================
+   COPY / DOWNLOAD
+===================================================== */
+function copyAll() {
+  navigator.clipboard.writeText(generateScript(currentTab)).then(() => {
+    ['copyAllBtn','copyBloggerBtn'].forEach(id => {
+      const btn = document.getElementById(id);
+      if (!btn) return;
+      const orig = btn.textContent;
+      btn.textContent = '✅ تم النسخ!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 3000);
+    });
+  });
+}
+
+function downloadScript() {
+  const ext = { bash:'sh', python:'py', m3u:'m3u', mpv:'sh', blogger:'html' }[currentTab] || 'txt';
+  const blob = new Blob([generateScript(currentTab)], { type:'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${animeSlug}_${currentTab}.${ext}`;
+  a.click();
+}
+
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✅ تم النسخ';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+/* =====================================================
+   HELPERS
+===================================================== */
+function showLoading(v) { document.getElementById('loading').classList.toggle('active', v); }
+function showError(msg) { document.getElementById('errorMsg').textContent = msg; document.getElementById('errorBox').classList.add('active'); }
+function clearResults() { document.getElementById('errorBox').classList.remove('active'); document.getElementById('results').classList.remove('active'); document.getElementById('videosGrid').innerHTML = ''; }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function ea(s)  { return String(s).replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+
+document.getElementById('animeUrl').addEventListener('keydown', e => { if (e.key==='Enter') fetchAnime(); });
+</script>
+</body>
+</html>
